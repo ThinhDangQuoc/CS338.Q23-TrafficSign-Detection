@@ -28,6 +28,13 @@ pyvenv.cfg
 # Temporary uploads in yolo_demo
 yolo_demo/uploads/*
 !yolo_demo/uploads/.gitkeep
+yolo_demo/static/outputs/*
+!yolo_demo/static/outputs/.gitkeep
+yolo_demo/static/snapshots/*
+!yolo_demo/static/snapshots/.gitkeep
+yolo_demo/detections.db
+yolo_demo/.ultralytics/
+yolo_demo/.matplotlib/
 
 # Large ML Weights (uncomment if you wish to exclude weights from git)
 # trained_weights/*.pt
