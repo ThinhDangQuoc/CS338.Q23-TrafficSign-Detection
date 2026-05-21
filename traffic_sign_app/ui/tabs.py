@@ -18,6 +18,7 @@ from traffic_sign_app.services.knowledge_base import (
     clear_history,
     get_detection_history,
     get_sign_info,
+    get_vehicle_label,
 )
 from traffic_sign_app.services.reporting import export_history_csv, get_summary_stats
 from traffic_sign_app.services.speech import should_speak, text_to_speech
@@ -25,10 +26,17 @@ from traffic_sign_app.ui.components import detect_and_render_image, show_sign_in
 from traffic_sign_app.ui.state import save_detection_with_cooldown, sign_label
 
 
-def render_image_tab(model, signs_data: dict, conf_threshold: float, enable_speech: bool) -> None:
+def render_image_tab(
+    model,
+    signs_data: dict,
+    conf_threshold: float,
+    enable_speech: bool,
+    selected_vehicle_type: str,
+) -> None:
     """Render image upload and detection workflow."""
     st.header("Nhận diện từ ảnh")
-    uploaded_image = st.file_uploader("Upload ảnh", type=["jpg", "jpeg", "png", "bmp", "webp"])
+    st.caption("Upload ảnh biển báo, chạy YOLO và xem giải thích kèm mức phạt tham khảo theo phương tiện đã chọn.")
+    uploaded_image = st.file_uploader("Chọn ảnh biển báo", type=["jpg", "jpeg", "png", "bmp", "webp"])
     if not uploaded_image:
         return
 
@@ -36,16 +44,18 @@ def render_image_tab(model, signs_data: dict, conf_threshold: float, enable_spee
         image = Image.open(uploaded_image).convert("RGB")
         image_rgb = np.array(image)
         col_a, col_b = st.columns(2)
-        col_a.image(image_rgb, caption="Ảnh gốc", use_container_width=True)
+        with col_a.container(border=True):
+            st.image(image_rgb, caption="Ảnh gốc", use_container_width=True)
 
         if model is None:
             st.info("Chưa thể detect vì model chưa sẵn sàng.")
             return
 
-        if st.button("Detect ảnh", type="primary"):
+        if st.button("Nhận diện ảnh", type="primary"):
             with st.spinner("Đang nhận diện biển báo..."):
                 detections, annotated = detect_and_render_image(model, image_rgb, signs_data, conf_threshold)
-            col_b.image(annotated, caption="Ảnh đã vẽ bounding box", use_container_width=True)
+            with col_b.container(border=True):
+                st.image(annotated, caption="Kết quả YOLO", use_container_width=True)
 
             if not detections:
                 st.warning("Không phát hiện biển báo trong ảnh.")
@@ -55,7 +65,12 @@ def render_image_tab(model, signs_data: dict, conf_threshold: float, enable_spee
                 st.session_state.last_sign_info = sign_info
                 save_detection_with_cooldown(detection, sign_info, "image", seconds=1)
                 with st.expander(sign_info.get("class_name", "Biển báo"), expanded=True):
-                    show_sign_info(sign_info, detection)
+                    show_sign_info(
+                        sign_info,
+                        detection,
+                        selected_vehicle_type,
+                        key_prefix=f"img_{idx}_{detection['class_id']}",
+                    )
                     button_key = f"img_speak_{detection['class_id']}_{idx}"
                     if enable_speech and st.button("Đọc cảnh báo", key=button_key):
                         speak_sign(sign_info)
@@ -69,18 +84,20 @@ def render_video_tab(
     conf_threshold: float,
     enable_speech: bool,
     video_stride: int,
+    selected_vehicle_type: str,
 ) -> None:
     """Render video upload and frame-by-frame detection workflow."""
     st.header("Nhận diện từ video")
-    uploaded_video = st.file_uploader("Upload video", type=["mp4", "avi", "mov", "mkv", "webm"])
-    max_frames = st.number_input("Giới hạn frame xử lý trong demo", min_value=30, max_value=3000, value=600, step=30)
+    st.caption("Xử lý video theo từng frame mẫu để demo luồng phát hiện và lưu lịch sử nhận diện.")
+    uploaded_video = st.file_uploader("Chọn video giao thông", type=["mp4", "avi", "mov", "mkv", "webm"])
+    max_frames = st.number_input("Giới hạn frame xử lý", min_value=30, max_value=3000, value=600, step=30)
 
     if not uploaded_video:
         return
     if model is None:
         st.info("Chưa thể detect video vì model chưa sẵn sàng.")
         return
-    if not st.button("Xử lý video", type="primary"):
+    if not st.button("Nhận diện video", type="primary"):
         return
 
     suffix = Path(uploaded_video.name).suffix or ".mp4"
@@ -139,17 +156,23 @@ def render_video_tab(
         return
 
     with result_placeholder:
-        st.subheader("Biển mới phát hiện")
+        st.subheader("Biển báo đã phát hiện")
         for item in last_seen.values():
             with st.expander(item["sign_info"].get("class_name", "Biển báo")):
-                show_sign_info(item["sign_info"], item["detection"])
+                show_sign_info(
+                    item["sign_info"],
+                    item["detection"],
+                    selected_vehicle_type,
+                    key_prefix=f"video_{item['detection'].get('class_id')}",
+                )
         if enable_speech and last_audio_path:
             st.audio(last_audio_path)
 
 
-def render_lookup_tab(signs_data: dict, enable_speech: bool) -> None:
+def render_lookup_tab(signs_data: dict, enable_speech: bool, selected_vehicle_type: str) -> None:
     """Render sign lookup workflow."""
     st.header("Tra cứu biển báo")
+    st.caption("Chọn một biển trong knowledge base để học ý nghĩa, hành động cần làm và mức phạt tham khảo.")
     if not signs_data:
         st.error("Không tải được data/signs.json.")
         return
@@ -161,14 +184,18 @@ def render_lookup_tab(signs_data: dict, enable_speech: bool) -> None:
     )
     selected_info = selected[1]
     st.session_state.last_sign_info = selected_info
-    show_sign_info(selected_info)
+    show_sign_info(
+        selected_info,
+        vehicle_type=selected_vehicle_type,
+        key_prefix=f"lookup_{selected_info.get('class_id')}",
+    )
     if enable_speech and st.button("Đọc cảnh báo tra cứu"):
         speak_sign(selected_info)
 
 
-def render_chat_tab(signs_data: dict) -> None:
+def render_chat_tab(signs_data: dict, selected_vehicle_type: str) -> None:
     """Render rule-based chatbot workflow."""
-    st.header("Chatbot rule-based")
+    st.header("Chatbot hỏi đáp")
     current_info = st.session_state.last_sign_info
     if not current_info and signs_data:
         selected = st.selectbox(
@@ -180,11 +207,22 @@ def render_chat_tab(signs_data: dict) -> None:
         current_info = selected[1]
 
     if current_info:
-        st.caption(f"Đang hỏi về: {current_info.get('class_name', 'Biển báo')}")
+        st.caption(
+            f"Đang hỏi về: {current_info.get('class_name', 'Biển báo')} | "
+            f"Phương tiện: {get_vehicle_label(selected_vehicle_type)}"
+        )
 
-    question = st.chat_input("Hỏi: biển này ý nghĩa là gì, cần làm gì, phạt không, ví dụ...")
+    question = st.chat_input("Hỏi về ý nghĩa, hành động cần làm, mức phạt, căn cứ pháp lý hoặc ví dụ...")
     if question:
-        answer = answer_question(question, current_info)
+        actual_speed = None
+        if current_info:
+            actual_speed = st.session_state.last_speed_values.get(str(current_info.get("class_id")))
+        answer = answer_question(
+            question,
+            current_info,
+            vehicle_type=selected_vehicle_type,
+            actual_speed=actual_speed,
+        )
         st.session_state.chat_history.append(("user", question))
         st.session_state.chat_history.append(("assistant", answer))
 
@@ -196,6 +234,7 @@ def render_chat_tab(signs_data: dict) -> None:
 def render_quiz_tab(signs_data: dict, scenarios: dict) -> None:
     """Render quiz and learning scenario workflow."""
     st.header("Quiz / Tình huống học tập")
+    st.caption("Luyện tập nhanh với các tình huống thường gặp trong bộ dữ liệu biển báo.")
     if not scenarios:
         st.warning("Chưa có dữ liệu tình huống trong data/scenarios.json.")
         return
@@ -207,20 +246,22 @@ def render_quiz_tab(signs_data: dict, scenarios: dict) -> None:
         format_func=lambda item: f"{item[0]} - {signs_data.get(item[0], {}).get('short_name', 'Tình huống')}",
     )
     class_id, scenario = selected
-    st.info(scenario.get("scenario", ""))
-    st.write(f"**Câu hỏi:** {scenario.get('question', '')}")
-    choice = st.radio("Đáp án", scenario.get("options", []), key=f"quiz_{class_id}")
-    if st.button("Kiểm tra đáp án"):
-        if choice == scenario.get("answer"):
-            st.success("Đúng rồi.")
-        else:
-            st.error(f"Chưa đúng. Đáp án đúng: {scenario.get('answer')}")
-        st.write(scenario.get("explanation", ""))
+    with st.container(border=True):
+        st.info(scenario.get("scenario", ""))
+        st.write(f"**Câu hỏi:** {scenario.get('question', '')}")
+        choice = st.radio("Đáp án", scenario.get("options", []), key=f"quiz_{class_id}")
+        if st.button("Kiểm tra đáp án"):
+            if choice == scenario.get("answer"):
+                st.success("Đúng rồi.")
+            else:
+                st.error(f"Chưa đúng. Đáp án đúng: {scenario.get('answer')}")
+            st.write(scenario.get("explanation", ""))
 
 
 def render_history_tab() -> None:
     """Render detection history, summary stats and CSV export."""
     st.header("Lịch sử / thống kê")
+    st.caption("Theo dõi các lượt nhận diện đã lưu trong SQLite và xuất dữ liệu demo khi cần.")
     history_df = get_detection_history(DB_PATH)
     stats = get_summary_stats(history_df)
     c1, c2, c3, c4 = st.columns(4)
@@ -238,4 +279,3 @@ def render_history_tab() -> None:
     if col_export.button("Export CSV"):
         csv_path = export_history_csv(history_df)
         st.success(f"Đã export CSV: {csv_path}")
-

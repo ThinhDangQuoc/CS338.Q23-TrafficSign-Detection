@@ -15,6 +15,8 @@ def ensure_state() -> None:
     st.session_state.setdefault("last_sign_info", None)
     st.session_state.setdefault("chat_history", [])
     st.session_state.setdefault("saved_recently", {})
+    st.session_state.setdefault("selected_vehicle_type", "car")
+    st.session_state.setdefault("last_speed_values", {})
 
 
 def sign_label(item: tuple[str, dict]) -> str:
@@ -40,4 +42,3 @@ def save_detection_with_cooldown(detection: dict, sign_info: dict, source: str, 
         DB_PATH,
     )
     st.session_state.saved_recently[key] = now
-

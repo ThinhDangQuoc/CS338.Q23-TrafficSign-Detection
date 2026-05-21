@@ -1,34 +1,447 @@
 {
-  "default": {
-    "penalty_note": "Mức phạt phụ thuộc loại phương tiện, hành vi cụ thể, địa điểm và quy định hiện hành. Nội dung trong app chỉ mang tính tham khảo học tập.",
-    "source_required": true
+  "wrong_way": {
+    "behavior": "Đi ngược chiều của đường một chiều hoặc đường có biển Cấm đi ngược chiều",
+    "related_class_ids": [2],
+    "related_signs": ["P.102"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "18.000.000 - 20.000.000 đồng",
+        "license_points": "Trừ 4 điểm GPLX",
+        "legal_basis": "Điểm d khoản 9 Điều 6; khoản 16 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "18.000.000 - 20.000.000 đồng",
+        "license_points": "Trừ 4 điểm GPLX",
+        "legal_basis": "Điểm d khoản 9 Điều 6; khoản 16 Điều 6"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "4.000.000 - 6.000.000 đồng",
+        "license_points": "Trừ 2 điểm GPLX",
+        "legal_basis": "Điểm a khoản 7 Điều 7; khoản 13 Điều 7"
+      }
+    },
+    "aggravated_cases": [
+      {
+        "case": "Ô tô đi ngược chiều trên cao tốc",
+        "fine": "30.000.000 - 40.000.000 đồng",
+        "license_points": "Trừ 10 điểm GPLX",
+        "legal_basis": "Điểm đ khoản 11 Điều 6; khoản 16 Điều 6"
+      },
+      {
+        "case": "Gây tai nạn giao thông",
+        "car_fine": "20.000.000 - 22.000.000 đồng",
+        "motorbike_fine": "10.000.000 - 14.000.000 đồng",
+        "license_points": "Có thể bị trừ điểm GPLX theo quy định"
+      }
+    ],
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
   },
-  "2": {
-    "penalty_note": "Hành vi đi ngược chiều có thể bị xử phạt nghiêm tùy phương tiện và tuyến đường. Cần cập nhật từ văn bản pháp luật hiện hành.",
-    "source_required": true
+  "no_left_turn": {
+    "behavior": "Rẽ trái tại nơi có biển cấm rẽ trái",
+    "related_class_ids": [7],
+    "related_signs": ["P.123a"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 4 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 4 Điều 6"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "600.000 - 800.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm a khoản 3 Điều 7"
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
   },
-  "10": {
-    "penalty_note": "Hành vi dừng, đỗ xe sai quy định có mức phạt khác nhau theo loại đường và phương tiện. Cần kiểm chứng bằng nguồn chính thống.",
-    "source_required": true
+  "no_right_turn": {
+    "behavior": "Rẽ phải tại nơi có biển cấm rẽ phải",
+    "related_class_ids": [32],
+    "related_signs": ["P.123b"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 4 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 4 Điều 6"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "600.000 - 800.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm a khoản 3 Điều 7"
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
   },
-  "38": {
-    "penalty_note": "Mức phạt quá tốc độ phụ thuộc mức vượt tốc độ và loại phương tiện. Cần cập nhật theo quy định hiện hành.",
-    "source_required": true
+  "no_u_turn": {
+    "behavior": "Quay đầu xe tại nơi có biển cấm quay đầu",
+    "related_class_ids": [17],
+    "related_signs": ["P.124a"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 4 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 4 Điều 6"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "400.000 - 600.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 2 Điều 7",
+        "note": "Một số vị trí đặc biệt có thể bị xử phạt ở mức cao hơn, ví dụ quay đầu trong hầm đường bộ."
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
   },
-  "39": {
-    "penalty_note": "Mức phạt quá tốc độ phụ thuộc mức vượt tốc độ và loại phương tiện. Cần cập nhật theo quy định hiện hành.",
-    "source_required": true
+  "no_left_turn_and_no_u_turn": {
+    "behavior": "Rẽ trái hoặc quay đầu xe tại nơi có biển cấm rẽ trái và cấm quay đầu",
+    "related_class_ids": [49],
+    "related_signs": ["P.124c"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 4 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm k khoản 4 Điều 6"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "Rẽ trái: 600.000 - 800.000 đồng; quay đầu: 400.000 - 600.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm a khoản 3 Điều 7; điểm k khoản 2 Điều 7",
+        "note": "Tùy hành vi thực tế là rẽ trái hay quay đầu xe."
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
   },
-  "40": {
-    "penalty_note": "Mức phạt quá tốc độ phụ thuộc mức vượt tốc độ và loại phương tiện. Cần cập nhật theo quy định hiện hành.",
-    "source_required": true
+  "no_stopping_and_parking": {
+    "behavior": "Dừng xe hoặc đỗ xe tại nơi có biển cấm dừng và đỗ xe",
+    "related_class_ids": [10],
+    "related_signs": ["P.130"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "Dừng xe: 600.000 - 800.000 đồng; đỗ xe: 800.000 - 1.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm đ khoản 2 Điều 6; điểm e khoản 3 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "Dừng xe: 600.000 - 800.000 đồng; đỗ xe: 800.000 - 1.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm đ khoản 2 Điều 6; điểm e khoản 3 Điều 6"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "400.000 - 600.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm e khoản 2 Điều 7"
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
   },
-  "41": {
-    "penalty_note": "Mức phạt quá tốc độ phụ thuộc mức vượt tốc độ và loại phương tiện. Cần cập nhật theo quy định hiện hành.",
-    "source_required": true
+  "no_parking": {
+    "behavior": "Đỗ xe tại nơi có biển cấm đỗ xe",
+    "related_class_ids": [46],
+    "related_signs": ["P.131a"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "800.000 - 1.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm e khoản 3 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "800.000 - 1.000.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm e khoản 3 Điều 6"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "400.000 - 600.000 đồng",
+        "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+        "legal_basis": "Điểm e khoản 2 Điều 7"
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
   },
-  "46": {
-    "penalty_note": "Hành vi đỗ xe sai quy định cần đối chiếu theo loại đường, thời điểm và phương tiện. Nội dung chỉ tham khảo.",
-    "source_required": true
+  "speed_limit": {
+    "behavior": "Chạy quá tốc độ quy định ghi trên biển báo",
+    "related_class_ids": [38, 39, 40, 41],
+    "related_signs": ["P.127*40", "P.127*50", "P.127*60", "P.127*80"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "calculation_required": true,
+    "formula": "actual_speed - speed_limit_value",
+    "speed_rules": {
+      "car": [
+        {
+          "over_from": 5,
+          "over_to": 10,
+          "fine": "800.000 - 1.000.000 đồng",
+          "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+          "legal_basis": "Điểm a khoản 3 Điều 6"
+        },
+        {
+          "over_from": 10,
+          "over_to": 20,
+          "fine": "4.000.000 - 6.000.000 đồng",
+          "license_points": "Trừ 2 điểm GPLX",
+          "legal_basis": "Điểm đ khoản 5 Điều 6; khoản 16 Điều 6"
+        },
+        {
+          "over_from": 20,
+          "over_to": 35,
+          "fine": "6.000.000 - 8.000.000 đồng",
+          "license_points": "Trừ 4 điểm GPLX",
+          "legal_basis": "Điểm a khoản 6 Điều 6; khoản 16 Điều 6"
+        },
+        {
+          "over_from": 35,
+          "over_to": null,
+          "fine": "12.000.000 - 14.000.000 đồng",
+          "license_points": "Trừ 6 điểm GPLX",
+          "legal_basis": "Điểm a khoản 7 Điều 6; khoản 16 Điều 6"
+        }
+      ],
+      "truck": [
+        {
+          "over_from": 5,
+          "over_to": 10,
+          "fine": "800.000 - 1.000.000 đồng",
+          "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+          "legal_basis": "Điểm a khoản 3 Điều 6"
+        },
+        {
+          "over_from": 10,
+          "over_to": 20,
+          "fine": "4.000.000 - 6.000.000 đồng",
+          "license_points": "Trừ 2 điểm GPLX",
+          "legal_basis": "Điểm đ khoản 5 Điều 6; khoản 16 Điều 6"
+        },
+        {
+          "over_from": 20,
+          "over_to": 35,
+          "fine": "6.000.000 - 8.000.000 đồng",
+          "license_points": "Trừ 4 điểm GPLX",
+          "legal_basis": "Điểm a khoản 6 Điều 6; khoản 16 Điều 6"
+        },
+        {
+          "over_from": 35,
+          "over_to": null,
+          "fine": "12.000.000 - 14.000.000 đồng",
+          "license_points": "Trừ 6 điểm GPLX",
+          "legal_basis": "Điểm a khoản 7 Điều 6; khoản 16 Điều 6"
+        }
+      ],
+      "motorbike": [
+        {
+          "over_from": 5,
+          "over_to": 10,
+          "fine": "400.000 - 600.000 đồng",
+          "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+          "legal_basis": "Điểm b khoản 2 Điều 7"
+        },
+        {
+          "over_from": 10,
+          "over_to": 20,
+          "fine": "800.000 - 1.000.000 đồng",
+          "license_points": "Không ghi nhận trừ điểm trong trường hợp thông thường",
+          "legal_basis": "Điểm a khoản 4 Điều 7"
+        },
+        {
+          "over_from": 20,
+          "over_to": null,
+          "fine": "6.000.000 - 8.000.000 đồng",
+          "license_points": "Trừ 4 điểm GPLX",
+          "legal_basis": "Điểm a khoản 8 Điều 7; khoản 13 Điều 7"
+        }
+      ]
+    },
+    "aggravated_cases": [
+      {
+        "case": "Gây tai nạn giao thông do chạy quá tốc độ",
+        "car_fine": "20.000.000 - 22.000.000 đồng",
+        "motorbike_fine": "10.000.000 - 14.000.000 đồng",
+        "license_points": "Có thể bị trừ 10 điểm GPLX theo trường hợp cụ thể"
+      }
+    ],
+    "note": "Với biển giới hạn tốc độ, không thể xác định mức phạt nếu không biết tốc độ thực tế của phương tiện."
+  },
+  "no_car": {
+    "behavior": "Ô tô đi vào đường hoặc khu vực có biển cấm ô tô",
+    "related_class_ids": [20],
+    "related_signs": ["P.103a"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "4.000.000 - 6.000.000 đồng",
+        "license_points": "Trừ 2 điểm GPLX",
+        "legal_basis": "Điểm i khoản 5 Điều 6; khoản 16 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "4.000.000 - 6.000.000 đồng",
+        "license_points": "Trừ 2 điểm GPLX",
+        "legal_basis": "Điểm i khoản 5 Điều 6; khoản 16 Điều 6"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "Không áp dụng trực tiếp cho biển cấm ô tô",
+        "license_points": "Không áp dụng",
+        "legal_basis": "Không áp dụng trực tiếp"
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
+  },
+  "no_motorbike": {
+    "behavior": "Xe máy hoặc mô tô đi vào đường hoặc khu vực có biển cấm mô tô, xe máy",
+    "related_class_ids": [29],
+    "related_signs": ["P.104"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "2.000.000 - 3.000.000 đồng",
+        "license_points": "Trừ 2 điểm GPLX",
+        "legal_basis": "Điểm b khoản 6 Điều 7; khoản 13 Điều 7"
+      },
+      "car": {
+        "vehicle_name": "Ô tô",
+        "fine": "Không áp dụng trực tiếp cho biển cấm mô tô, xe máy",
+        "license_points": "Không áp dụng",
+        "legal_basis": "Không áp dụng trực tiếp"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "Không áp dụng trực tiếp cho biển cấm mô tô, xe máy",
+        "license_points": "Không áp dụng",
+        "legal_basis": "Không áp dụng trực tiếp"
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
+  },
+  "no_truck": {
+    "behavior": "Xe tải đi vào đường hoặc khu vực có biển cấm xe tải",
+    "related_class_ids": [14],
+    "related_signs": ["P.106a"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "4.000.000 - 6.000.000 đồng",
+        "license_points": "Trừ 2 điểm GPLX",
+        "legal_basis": "Điểm i khoản 5 Điều 6; khoản 16 Điều 6"
+      },
+      "car": {
+        "vehicle_name": "Ô tô không phải xe tải",
+        "fine": "Không áp dụng trực tiếp nếu xe không thuộc nhóm bị cấm",
+        "license_points": "Không áp dụng",
+        "legal_basis": "Phụ thuộc biển phụ và loại phương tiện thực tế"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "Không áp dụng trực tiếp cho biển cấm xe tải",
+        "license_points": "Không áp dụng",
+        "legal_basis": "Không áp dụng trực tiếp"
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
+  },
+  "no_passenger_car_and_truck": {
+    "behavior": "Ô tô khách hoặc ô tô tải đi vào đường hoặc khu vực có biển cấm",
+    "related_class_ids": [18],
+    "related_signs": ["P.107"],
+    "legal_document": "Nghị định 168/2024/NĐ-CP",
+    "effective_from": "2025-01-01",
+    "verified_at": "2026-05-21",
+    "by_vehicle": {
+      "passenger_car": {
+        "vehicle_name": "Ô tô khách",
+        "fine": "4.000.000 - 6.000.000 đồng",
+        "license_points": "Trừ 2 điểm GPLX",
+        "legal_basis": "Điểm i khoản 5 Điều 6; khoản 16 Điều 6"
+      },
+      "truck": {
+        "vehicle_name": "Xe tải",
+        "fine": "4.000.000 - 6.000.000 đồng",
+        "license_points": "Trừ 2 điểm GPLX",
+        "legal_basis": "Điểm i khoản 5 Điều 6; khoản 16 Điều 6"
+      },
+      "car": {
+        "vehicle_name": "Ô tô con không thuộc nhóm bị cấm",
+        "fine": "Không áp dụng trực tiếp nếu xe không thuộc nhóm bị cấm",
+        "license_points": "Không áp dụng",
+        "legal_basis": "Phụ thuộc loại xe và biển phụ thực tế"
+      },
+      "motorbike": {
+        "vehicle_name": "Xe máy / mô tô",
+        "fine": "Không áp dụng trực tiếp cho biển này",
+        "license_points": "Không áp dụng",
+        "legal_basis": "Không áp dụng trực tiếp"
+      }
+    },
+    "note": "Thông tin chỉ mang tính tham khảo phục vụ học tập."
   }
 }

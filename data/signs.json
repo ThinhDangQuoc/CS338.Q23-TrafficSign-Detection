@@ -35,7 +35,8 @@
     "driver_action": "Người lái không được đi vào đoạn đường có biển này và cần chọn hướng đi khác đúng quy định.",
     "warning": "Không đi vào đường ngược chiều.",
     "common_violation": "Đi vào đường một chiều theo hướng bị cấm.",
-    "penalty": "Mức phạt cần được cập nhật theo quy định hiện hành. Nội dung trong app chỉ mang tính tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["wrong_way"],
     "example": "Khi gặp biển cấm đi ngược chiều ở đầu đường, người lái không được tiếp tục đi vào dù đường vắng."
   },
   "3": {
@@ -100,7 +101,8 @@
     "driver_action": "Không rẽ trái; chọn hướng đi thẳng, rẽ phải hoặc lộ trình thay thế hợp lệ.",
     "warning": "Không rẽ trái.",
     "common_violation": "Rẽ trái tại nơi có biển cấm rẽ trái.",
-    "penalty": "Mức phạt cần được kiểm chứng theo quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_left_turn"],
     "example": "Nếu cần đến địa điểm bên trái, hãy đi tiếp tới điểm quay đầu hoặc tuyến đường được phép."
   },
   "8": {
@@ -139,7 +141,8 @@
     "driver_action": "Không dừng, không đỗ tại khu vực có biển; tìm vị trí được phép nếu cần dừng xe.",
     "warning": "Không dừng hoặc đỗ xe.",
     "common_violation": "Dừng xe chờ người hoặc đỗ xe trong khu vực cấm.",
-    "penalty": "Mức phạt thay đổi theo loại đường, phương tiện và quy định hiện hành. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_stopping_and_parking"],
     "example": "Không tấp vào lề để chờ khách dưới biển cấm dừng và đỗ xe."
   },
   "11": {
@@ -191,7 +194,8 @@
     "driver_action": "Tài xế xe tải cần chọn tuyến đường khác, chú ý biển phụ nếu có quy định tải trọng hoặc thời gian.",
     "warning": "Xe tải không được đi vào.",
     "common_violation": "Xe tải đi vào tuyến đường cấm xe tải.",
-    "penalty": "Mức phạt cần đối chiếu quy định hiện hành và loại phương tiện. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_truck"],
     "example": "Xe tải giao hàng cần kiểm tra tuyến thay thế trước khi đi vào phố có biển cấm xe tải."
   },
   "15": {
@@ -230,7 +234,8 @@
     "driver_action": "Không quay đầu tại đây; tiếp tục đi đến nơi có chỉ dẫn được phép quay xe.",
     "warning": "Không quay đầu xe.",
     "common_violation": "Quay đầu xe tại nơi có biển cấm quay đầu.",
-    "penalty": "Mức phạt phụ thuộc loại phương tiện, vị trí và quy định hiện hành. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_u_turn"],
     "example": "Nếu đi quá điểm cần rẽ, không quay đầu dưới biển cấm mà tìm vị trí được phép phía trước."
   },
   "18": {
@@ -243,7 +248,8 @@
     "driver_action": "Người điều khiển các loại xe bị cấm phải chọn tuyến khác theo chỉ dẫn giao thông.",
     "warning": "Ô tô khách và ô tô tải không được vào.",
     "common_violation": "Xe khách hoặc xe tải đi vào tuyến đường bị cấm.",
-    "penalty": "Mức phạt cần được cập nhật theo quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_passenger_car_and_truck"],
     "example": "Xe khách cần tránh đường nội đô nhỏ có biển cấm ô tô khách và ô tô tải."
   },
   "19": {
@@ -269,7 +275,8 @@
     "driver_action": "Người lái ô tô phải chọn đường khác; chú ý biển phụ nếu có ngoại lệ.",
     "warning": "Ô tô không được đi vào.",
     "common_violation": "Ô tô đi vào đường cấm ô tô.",
-    "penalty": "Mức phạt phụ thuộc loại xe, tuyến đường và quy định hiện hành. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_car"],
     "example": "Khi đầu đường có biển cấm ô tô, tài xế ô tô cần rẽ sang tuyến phù hợp."
   },
   "21": {
@@ -386,7 +393,8 @@
     "driver_action": "Người đi mô tô, xe máy cần chọn tuyến khác và tuân thủ chỉ dẫn thay thế.",
     "warning": "Mô tô và xe máy không được vào.",
     "common_violation": "Mô tô hoặc xe máy đi vào đường cấm.",
-    "penalty": "Mức phạt cần đối chiếu quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_motorbike"],
     "example": "Xe máy không đi vào đoạn đường có biển cấm mô tô, xe máy dù lộ trình ngắn hơn."
   },
   "30": {
@@ -425,7 +433,8 @@
     "driver_action": "Không rẽ phải; đi theo hướng được phép hoặc chọn lộ trình thay thế.",
     "warning": "Không rẽ phải.",
     "common_violation": "Rẽ phải tại nơi có biển cấm rẽ phải.",
-    "penalty": "Mức phạt cần được cập nhật theo quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_right_turn"],
     "example": "Nếu cần rẽ phải, hãy đi tiếp tới điểm cho phép rẽ hoặc quay lại bằng tuyến khác."
   },
   "33": {
@@ -503,7 +512,9 @@
     "driver_action": "Điều chỉnh tốc độ không vượt quá 50 km/h và chú ý điều kiện đường thực tế.",
     "warning": "Không vượt quá 50 km/h.",
     "common_violation": "Chạy quá tốc độ tối đa cho phép.",
-    "penalty": "Mức phạt quá tốc độ phụ thuộc mức vượt, loại phương tiện và quy định hiện hành. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "speed_limit_value": 50,
+    "penalty_refs": ["speed_limit"],
     "example": "Nếu đồng hồ xe đang trên 50 km/h khi vào khu vực có biển, cần giảm tốc ngay."
   },
   "39": {
@@ -516,7 +527,9 @@
     "driver_action": "Duy trì tốc độ không vượt quá 60 km/h và giảm tốc thêm nếu điều kiện không an toàn.",
     "warning": "Không vượt quá 60 km/h.",
     "common_violation": "Đi nhanh hơn tốc độ tối đa được quy định.",
-    "penalty": "Mức phạt quá tốc độ phụ thuộc mức vượt và quy định hiện hành. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "speed_limit_value": 60,
+    "penalty_refs": ["speed_limit"],
     "example": "Trên đoạn có biển 60 km/h, xe cần giữ tốc độ bằng hoặc thấp hơn giới hạn này."
   },
   "40": {
@@ -529,7 +542,9 @@
     "driver_action": "Không vượt quá 80 km/h và vẫn phải giảm tốc khi thời tiết, tầm nhìn hoặc mật độ xe không đảm bảo.",
     "warning": "Không vượt quá 80 km/h.",
     "common_violation": "Chạy quá tốc độ tối đa ghi trên biển.",
-    "penalty": "Mức phạt cần đối chiếu quy định hiện hành theo mức vượt tốc độ. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "speed_limit_value": 80,
+    "penalty_refs": ["speed_limit"],
     "example": "Dù đường thoáng, người lái vẫn không được vượt quá 80 km/h trong phạm vi biển."
   },
   "41": {
@@ -542,7 +557,9 @@
     "driver_action": "Giảm tốc và duy trì tốc độ không vượt quá 40 km/h.",
     "warning": "Không vượt quá 40 km/h.",
     "common_violation": "Không giảm tốc khi vào khu vực giới hạn 40 km/h.",
-    "penalty": "Mức phạt quá tốc độ phụ thuộc mức vượt và quy định hiện hành. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "speed_limit_value": 40,
+    "penalty_refs": ["speed_limit"],
     "example": "Gần khu dân cư hoặc trường học, biển 40 km/h yêu cầu xe đi chậm hơn bình thường."
   },
   "42": {
@@ -607,7 +624,8 @@
     "driver_action": "Không đỗ xe tại khu vực có biển; tìm bãi hoặc vị trí được phép đỗ.",
     "warning": "Không đỗ xe tại đây.",
     "common_violation": "Đỗ xe trong khu vực cấm đỗ.",
-    "penalty": "Mức phạt phụ thuộc vị trí, loại phương tiện và quy định hiện hành. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_parking"],
     "example": "Không để xe qua đêm hoặc chờ lâu dưới biển cấm đỗ xe."
   },
   "47": {
@@ -646,7 +664,8 @@
     "driver_action": "Không rẽ trái, không quay đầu; chọn hướng đi khác được phép.",
     "warning": "Không rẽ trái, không quay đầu.",
     "common_violation": "Rẽ trái hoặc quay đầu trái với biển cấm.",
-    "penalty": "Mức phạt phụ thuộc loại xe và quy định hiện hành. Nội dung chỉ tham khảo.",
+    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty_refs": ["no_left_turn_and_no_u_turn"],
     "example": "Nếu cần quay lại, hãy đi tiếp tới điểm quay xe hợp lệ thay vì quay đầu tại đây."
   },
   "50": {
