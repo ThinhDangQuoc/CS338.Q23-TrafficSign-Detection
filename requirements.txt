@@ -6,3 +6,5 @@ pillow
 pandas
 edge-tts
 gTTS
+streamlit-webrtc
+av

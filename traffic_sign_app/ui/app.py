@@ -25,8 +25,10 @@ from traffic_sign_app.ui.tabs import (
     render_history_tab,
     render_image_tab,
     render_lookup_tab,
+    render_model_evaluation_tab,
     render_quiz_tab,
     render_video_tab,
+    render_webcam_tab,
 )
 
 
@@ -187,7 +189,7 @@ def _sidebar_card(label: str, value: str) -> None:
     )
 
 
-def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> tuple[float, bool, int, str]:
+def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> tuple[float, int, int, bool, bool, bool, str]:
     with st.sidebar:
         st.header("Điều khiển demo")
         _sidebar_card("Model", "YOLO11s Traffic Sign")
@@ -199,8 +201,11 @@ def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> 
         st.divider()
         st.subheader("Thiết lập nhận diện")
         conf_threshold = st.slider("Ngưỡng tin cậy", 0.05, 0.95, 0.25, 0.05)
+        img_size = st.selectbox("Image size / inference size", options=[416, 640, 960], index=1)
+        video_stride = st.number_input("Process every N frames", min_value=1, max_value=30, value=5)
+        save_history = st.toggle("Lưu lịch sử nhận diện", value=True)
         enable_speech = st.toggle("Đọc cảnh báo bằng giọng nói", value=True)
-        video_stride = st.number_input("Detect mỗi N frame video", min_value=1, max_value=30, value=5)
+        show_performance = st.toggle("Hiển thị FPS / inference time", value=True)
         if st.session_state.get("selected_vehicle_type") not in VEHICLE_OPTIONS:
             st.session_state.selected_vehicle_type = "car"
         selected_vehicle_type = st.selectbox(
@@ -210,7 +215,15 @@ def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> 
             key="selected_vehicle_type",
         )
 
-    return conf_threshold, enable_speech, int(video_stride), selected_vehicle_type
+    return (
+        conf_threshold,
+        int(img_size),
+        int(video_stride),
+        enable_speech,
+        save_history,
+        show_performance,
+        selected_vehicle_type,
+    )
 
 
 def _load_model_or_show_warning(model_path: str):
@@ -244,13 +257,21 @@ def main() -> None:
     model_path = str(MODEL_PATH)
     model = _load_model_or_show_warning(model_path)
     _render_header(model is not None, len(signs_data))
-    conf_threshold, enable_speech, video_stride, selected_vehicle_type = _render_sidebar(
+    (
+        conf_threshold,
+        img_size,
+        video_stride,
+        enable_speech,
+        save_history,
+        show_performance,
+        selected_vehicle_type,
+    ) = _render_sidebar(
         classes,
         signs_data,
         model is not None,
     )
 
-    tab_image, tab_video, tab_lookup, tab_chat, tab_quiz, tab_history = st.tabs(
+    tab_image, tab_video, tab_lookup, tab_chat, tab_quiz, tab_history, tab_eval, tab_webcam = st.tabs(
         [
             "Nhận diện ảnh",
             "Nhận diện video",
@@ -258,13 +279,34 @@ def main() -> None:
             "Chatbot hỏi đáp",
             "Quiz / Tình huống",
             "Lịch sử / thống kê",
+            "Đánh giá model",
+            "Webcam realtime",
         ]
     )
 
     with tab_image:
-        render_image_tab(model, signs_data, conf_threshold, enable_speech, selected_vehicle_type)
+        render_image_tab(
+            model,
+            signs_data,
+            conf_threshold,
+            img_size,
+            enable_speech,
+            save_history,
+            show_performance,
+            selected_vehicle_type,
+        )
     with tab_video:
-        render_video_tab(model, signs_data, conf_threshold, enable_speech, video_stride, selected_vehicle_type)
+        render_video_tab(
+            model,
+            signs_data,
+            conf_threshold,
+            img_size,
+            enable_speech,
+            save_history,
+            show_performance,
+            video_stride,
+            selected_vehicle_type,
+        )
     with tab_lookup:
         render_lookup_tab(signs_data, enable_speech, selected_vehicle_type)
     with tab_chat:
@@ -273,3 +315,17 @@ def main() -> None:
         render_quiz_tab(signs_data, scenarios)
     with tab_history:
         render_history_tab()
+    with tab_eval:
+        render_model_evaluation_tab(model, classes)
+    with tab_webcam:
+        render_webcam_tab(
+            model,
+            signs_data,
+            conf_threshold,
+            img_size,
+            enable_speech,
+            save_history,
+            show_performance,
+            video_stride,
+            selected_vehicle_type,
+        )

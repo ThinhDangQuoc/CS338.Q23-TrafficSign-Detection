@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -40,7 +41,17 @@ def _model_names(model: Any) -> dict[int, str]:
     return {int(idx): str(name) for idx, name in names.items()}
 
 
-def detect_image(model, image, conf_threshold: float = 0.25) -> list[dict[str, Any]]:
+@lru_cache(maxsize=4)
+def _cached_classes(path: str) -> tuple[str, ...]:
+    return tuple(load_classes(path))
+
+
+def detect_image(
+    model,
+    image,
+    conf_threshold: float = 0.25,
+    img_size: int | None = None,
+) -> list[dict[str, Any]]:
     """Run YOLO on a BGR/RGB image array and return normalized detections."""
     if model is None or image is None:
         return []
@@ -50,14 +61,17 @@ def detect_image(model, image, conf_threshold: float = 0.25) -> list[dict[str, A
         return []
 
     try:
-        results = model.predict(source=frame, conf=conf_threshold, verbose=False)
+        predict_kwargs: dict[str, Any] = {"source": frame, "conf": conf_threshold, "verbose": False}
+        if img_size:
+            predict_kwargs["imgsz"] = int(img_size)
+        results = model.predict(**predict_kwargs)
     except Exception as exc:
         raise RuntimeError(f"Lỗi khi chạy YOLO inference: {exc}") from exc
 
     if not results:
         return []
 
-    class_names = load_classes(CLASSES_PATH)
+    class_names = list(_cached_classes(str(CLASSES_PATH)))
     names = _model_names(model)
     detections: list[dict[str, Any]] = []
 
@@ -111,4 +125,3 @@ def draw_detections(image, detections: list[dict[str, Any]], signs_data: dict | 
         )
 
     return annotated
-

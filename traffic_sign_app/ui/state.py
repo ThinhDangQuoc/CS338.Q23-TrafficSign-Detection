@@ -25,8 +25,17 @@ def sign_label(item: tuple[str, dict]) -> str:
     return f"{class_id} - {info.get('class_name', 'Chưa rõ')}"
 
 
-def save_detection_with_cooldown(detection: dict, sign_info: dict, source: str, seconds: int = 5) -> None:
+def save_detection_with_cooldown(
+    detection: dict,
+    sign_info: dict,
+    source: str,
+    seconds: int = 5,
+    enabled: bool = True,
+) -> None:
     """Save a detection while avoiding repeated rows for the same class/source."""
+    if not enabled:
+        return
+
     key = f"{source}:{detection.get('class_id')}"
     now = time.time()
     last_saved = st.session_state.saved_recently.get(key, 0)

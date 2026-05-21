@@ -85,8 +85,14 @@ def speak_sign(sign_info: dict) -> None:
         st.warning("Không tạo được audio TTS. App vẫn tiếp tục chạy bình thường.")
 
 
-def detect_and_render_image(model, image_rgb: np.ndarray, signs_data: dict, conf_threshold: float):
+def detect_and_render_image(
+    model,
+    image_rgb: np.ndarray,
+    signs_data: dict,
+    conf_threshold: float,
+    img_size: int | None = None,
+):
     """Detect signs and draw annotations for an image/frame."""
-    detections = detect_image(model, image_rgb, conf_threshold)
+    detections = detect_image(model, image_rgb, conf_threshold, img_size)
     annotated = draw_detections(image_rgb, detections, signs_data)
     return detections, annotated
