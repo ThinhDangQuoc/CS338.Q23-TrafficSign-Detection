@@ -1,0 +1,52 @@
+W.224 – Đường người đi bộ cắt ngang
+W.205c – Đường giao nhau (ngã ba bên phải)
+P.102 – Cấm đi ngược chiều
+R.302a – Phải đi vòng sang bên phải
+W.205a – Giao nhau với đường đồng cấp
+W.207 – Giao nhau với đường không ưu tiên
+W.201a – Chỗ ngoặt nguy hiểm vòng bên trái
+P.123a – Cấm rẽ trái
+I.434a – Bến xe buýt
+R.303 – Nơi giao nhau chạy theo vòng xuyến
+P.130 – Cấm dừng và đỗ xe
+I.409 – Chỗ quay xe
+R.415a – Biển gộp làn đường theo phương tiện
+W.245a – Đi chậm
+P.106a*Xe tải – Cấm xe tải
+W.203c – Đường bị thu hẹp về phía phải
+P.117* – Giới hạn chiều cao
+P.124a* – Cấm quay đầu
+P.107 – Cấm ô tô khách và ô tô tải
+P.124d – Cấm rẽ phải và quay đầu
+P.103a – Cấm ô tô
+W.203b – Đường bị thu hẹp về phía trái
+W.221b – Gồ giảm tốc phía trước
+P.111 – Cấm xe hai và ba bánh
+P.129 – Kiểm tra
+S.505aXe máy – Chỉ dành cho xe máy
+W.246a – Chướng ngoại vật phía trước
+W.225 – Trẻ em
+S.505aXe tải và công – Xe tải và xe công
+P.104 – Cấm mô tô và xe máy
+S.505aXe tải – Chỉ dành cho xe tải
+Camera – Đường có camera giám sát
+P.123b – Cấm rẽ phải
+W.202b – Nhiều chỗ ngoặt nguy hiểm liên tiếp, chỗ đầu tiên sang phải
+B.8a – Cấm xe sơ-mi rơ-moóc
+P.137 – Cấm rẽ trái và phải
+P.139 – Cấm đi thẳng và rẽ phải
+W.205b – Đường giao nhau (ngã ba bên trái)
+P.127*50 – Giới hạn tốc độ (50km/h)
+P.127*60 – Giới hạn tốc độ (60km/h)
+P.127*80 – Giới hạn tốc độ (80km/h)
+P.127*40 – Giới hạn tốc độ (40km/h)
+R.301e – Các xe chỉ được rẽ trái
+W.239b* – Chiều cao tĩnh không thực tế
+W.233 – Nguy hiểm khác
+I.407a – Đường một chiều
+P.131a – Cấm đỗ xe
+P.124b1 – Cấm ô tô quay đầu xe (được rẽ trái)
+W.210 – Giao nhau với đường sắt có rào chắn
+P.124c – Cấm rẽ trái và quay đầu xe
+W.201b – Chỗ ngoặt nguy hiểm vòng bên phải
+W.246c – Chú ý chướng ngại vật – vòng tránh sang bên phải

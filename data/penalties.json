@@ -1,0 +1,34 @@
+{
+  "default": {
+    "penalty_note": "Mức phạt phụ thuộc loại phương tiện, hành vi cụ thể, địa điểm và quy định hiện hành. Nội dung trong app chỉ mang tính tham khảo học tập.",
+    "source_required": true
+  },
+  "2": {
+    "penalty_note": "Hành vi đi ngược chiều có thể bị xử phạt nghiêm tùy phương tiện và tuyến đường. Cần cập nhật từ văn bản pháp luật hiện hành.",
+    "source_required": true
+  },
+  "10": {
+    "penalty_note": "Hành vi dừng, đỗ xe sai quy định có mức phạt khác nhau theo loại đường và phương tiện. Cần kiểm chứng bằng nguồn chính thống.",
+    "source_required": true
+  },
+  "38": {
+    "penalty_note": "Mức phạt quá tốc độ phụ thuộc mức vượt tốc độ và loại phương tiện. Cần cập nhật theo quy định hiện hành.",
+    "source_required": true
+  },
+  "39": {
+    "penalty_note": "Mức phạt quá tốc độ phụ thuộc mức vượt tốc độ và loại phương tiện. Cần cập nhật theo quy định hiện hành.",
+    "source_required": true
+  },
+  "40": {
+    "penalty_note": "Mức phạt quá tốc độ phụ thuộc mức vượt tốc độ và loại phương tiện. Cần cập nhật theo quy định hiện hành.",
+    "source_required": true
+  },
+  "41": {
+    "penalty_note": "Mức phạt quá tốc độ phụ thuộc mức vượt tốc độ và loại phương tiện. Cần cập nhật theo quy định hiện hành.",
+    "source_required": true
+  },
+  "46": {
+    "penalty_note": "Hành vi đỗ xe sai quy định cần đối chiếu theo loại đường, thời điểm và phương tiện. Nội dung chỉ tham khảo.",
+    "source_required": true
+  }
+}

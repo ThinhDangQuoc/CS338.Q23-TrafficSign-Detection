@@ -36,5 +36,12 @@ yolo_demo/detections.db
 yolo_demo/.ultralytics/
 yolo_demo/.matplotlib/
 
+# Streamlit learning app runtime files
+database/*.db
+database/*.csv
+assets/audio/*.mp3
+assets/temp/
+.cache/
+
 # Large ML Weights (uncomment if you wish to exclude weights from git)
 # trained_weights/*.pt

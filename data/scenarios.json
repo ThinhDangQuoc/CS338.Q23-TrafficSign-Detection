@@ -1,0 +1,86 @@
+{
+  "0": {
+    "scenario": "Bạn đang đến gần khu vực có biển đường người đi bộ cắt ngang.",
+    "question": "Bạn nên xử lý thế nào?",
+    "options": ["Giữ nguyên tốc độ", "Giảm tốc và nhường người đi bộ khi cần", "Bấm còi liên tục", "Đi sát xe phía trước"],
+    "answer": "Giảm tốc và nhường người đi bộ khi cần",
+    "explanation": "Biển W.224 cảnh báo nơi người đi bộ có thể qua đường, người lái cần giảm tốc và quan sát."
+  },
+  "2": {
+    "scenario": "Bạn đang đi đến đầu một tuyến đường có biển cấm đi ngược chiều.",
+    "question": "Bạn nên làm gì?",
+    "options": ["Tiếp tục đi vào nếu đường vắng", "Không đi vào và chọn hướng khác", "Bấm còi rồi đi tiếp", "Đi sát lề để tránh xe khác"],
+    "answer": "Không đi vào và chọn hướng khác",
+    "explanation": "Biển P.102 cấm phương tiện đi vào theo chiều đặt biển."
+  },
+  "3": {
+    "scenario": "Phía trước có đảo giao thông và biển phải đi vòng sang bên phải.",
+    "question": "Hướng đi đúng là gì?",
+    "options": ["Vòng sang bên trái", "Đi thẳng qua đảo", "Vòng sang bên phải", "Dừng xe tại chỗ"],
+    "answer": "Vòng sang bên phải",
+    "explanation": "Biển R.302a là biển hiệu lệnh yêu cầu đi vòng sang bên phải."
+  },
+  "7": {
+    "scenario": "Bạn đến giao lộ có biển cấm rẽ trái nhưng điểm đến nằm ở phía trái.",
+    "question": "Bạn nên chọn phương án nào?",
+    "options": ["Rẽ trái thật nhanh", "Không rẽ trái và tìm lộ trình khác", "Rẽ trái nếu không có xe", "Dừng giữa giao lộ để hỏi đường"],
+    "answer": "Không rẽ trái và tìm lộ trình khác",
+    "explanation": "Biển P.123a cấm rẽ trái tại vị trí đặt biển."
+  },
+  "9": {
+    "scenario": "Bạn sắp vào vòng xuyến có biển hiệu lệnh chạy theo vòng xuyến.",
+    "question": "Bạn cần làm gì?",
+    "options": ["Đi ngược chiều vòng xuyến nếu gần hơn", "Đi theo chiều vòng xuyến quy định", "Dừng lại giữa vòng xuyến", "Chuyển làn liên tục"],
+    "answer": "Đi theo chiều vòng xuyến quy định",
+    "explanation": "Biển R.303 yêu cầu phương tiện chạy theo chiều vòng xuyến."
+  },
+  "10": {
+    "scenario": "Bạn muốn tấp vào lề để chờ bạn nhưng trước mặt có biển cấm dừng và đỗ xe.",
+    "question": "Bạn nên làm gì?",
+    "options": ["Dừng tạm vài phút", "Đỗ xe nếu bật đèn khẩn cấp", "Không dừng, không đỗ và tìm nơi được phép", "Dừng sát lề là được"],
+    "answer": "Không dừng, không đỗ và tìm nơi được phép",
+    "explanation": "Biển P.130 cấm cả dừng xe và đỗ xe trong phạm vi hiệu lực."
+  },
+  "27": {
+    "scenario": "Bạn đi qua khu vực gần trường học và thấy biển trẻ em.",
+    "question": "Cách xử lý phù hợp là gì?",
+    "options": ["Tăng tốc để qua nhanh", "Giảm tốc và sẵn sàng dừng", "Chỉ quan sát phía trước", "Đi sát lề trái"],
+    "answer": "Giảm tốc và sẵn sàng dừng",
+    "explanation": "Biển W.225 cảnh báo khu vực có trẻ em, cần giảm tốc và quan sát kỹ."
+  },
+  "32": {
+    "scenario": "Bạn đến giao lộ có biển cấm rẽ phải.",
+    "question": "Bạn nên làm gì?",
+    "options": ["Rẽ phải nếu không có cảnh sát", "Không rẽ phải và đi theo hướng được phép", "Rẽ phải thật chậm", "Dừng xe giữa đường"],
+    "answer": "Không rẽ phải và đi theo hướng được phép",
+    "explanation": "Biển P.123b cấm rẽ phải tại vị trí đặt biển."
+  },
+  "38": {
+    "scenario": "Bạn đang chạy 60 km/h và thấy biển giới hạn tốc độ 50 km/h.",
+    "question": "Bạn cần làm gì?",
+    "options": ["Giữ nguyên tốc độ", "Tăng tốc nếu đường thoáng", "Giảm xuống không quá 50 km/h", "Chỉ giảm tốc khi có camera"],
+    "answer": "Giảm xuống không quá 50 km/h",
+    "explanation": "Biển P.127*50 quy định tốc độ tối đa 50 km/h trong phạm vi hiệu lực."
+  },
+  "39": {
+    "scenario": "Đoạn đường phía trước có biển giới hạn tốc độ 60 km/h.",
+    "question": "Tốc độ nào phù hợp?",
+    "options": ["Không vượt quá 60 km/h", "70 km/h nếu đường vắng", "80 km/h nếu xe tốt", "Tùy ý nếu không có camera"],
+    "answer": "Không vượt quá 60 km/h",
+    "explanation": "Biển P.127*60 yêu cầu người lái không vượt quá tốc độ ghi trên biển."
+  },
+  "45": {
+    "scenario": "Bạn đi vào tuyến đường có biển đường một chiều.",
+    "question": "Bạn cần chú ý điều gì?",
+    "options": ["Có thể đi ngược chiều nếu gần", "Chỉ đi theo chiều được chỉ dẫn", "Quay đầu ở bất cứ đâu", "Dừng xe giữa đường để quan sát"],
+    "answer": "Chỉ đi theo chiều được chỉ dẫn",
+    "explanation": "Biển I.407a chỉ dẫn đường một chiều, không được đi ngược chiều."
+  },
+  "46": {
+    "scenario": "Bạn muốn để xe lâu bên lề đường nhưng có biển cấm đỗ xe.",
+    "question": "Bạn nên làm gì?",
+    "options": ["Đỗ xe nếu còn chỗ trống", "Không đỗ xe tại khu vực này", "Đỗ xe và bật đèn khẩn cấp", "Đỗ sát vỉa hè là được"],
+    "answer": "Không đỗ xe tại khu vực này",
+    "explanation": "Biển P.131a cấm đỗ xe trong phạm vi hiệu lực của biển."
+  }
+}

@@ -1,8 +1,8 @@
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.12.0+cpu
-torchvision==0.27.0+cpu
-fastapi
-uvicorn
-python-multipart
+streamlit
 ultralytics
 opencv-python
+numpy
+pillow
+pandas
+edge-tts
+gTTS
