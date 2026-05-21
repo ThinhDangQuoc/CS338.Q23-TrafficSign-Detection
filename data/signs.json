@@ -9,8 +9,26 @@
     "driver_action": "Người lái cần giảm tốc độ, quan sát hai bên và nhường đường cho người đi bộ khi cần.",
     "warning": "Chú ý người đi bộ cắt ngang.",
     "common_violation": "Không giảm tốc hoặc không nhường đường cho người đi bộ tại nơi qua đường.",
-    "penalty": "Mức phạt cần được cập nhật theo quy định hiện hành. Nội dung trong app chỉ mang tính tham khảo.",
-    "example": "Khi thấy biển gần trường học hoặc khu dân cư, hãy giảm tốc và chuẩn bị dừng nếu có người qua đường."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi thấy biển gần trường học hoặc khu dân cư, hãy giảm tốc và chuẩn bị dừng nếu có người qua đường.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "pedestrian_yield",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "1": {
     "class_id": 1,
@@ -22,8 +40,26 @@
     "driver_action": "Giảm tốc độ, chú ý xe từ nhánh bên phải và giữ khoảng cách an toàn.",
     "warning": "Sắp có ngã ba bên phải.",
     "common_violation": "Đi nhanh qua giao lộ, thiếu quan sát xe nhập từ bên phải.",
-    "penalty": "Mức phạt phụ thuộc hành vi cụ thể và quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Trước khi tới ngã ba, quan sát gương và lề phải để tránh xe rẽ hoặc nhập làn bất ngờ."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Trước khi tới ngã ba, quan sát gương và lề phải để tránh xe rẽ hoặc nhập làn bất ngờ.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "intersection_yield",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "2": {
     "class_id": 2,
@@ -35,9 +71,24 @@
     "driver_action": "Người lái không được đi vào đoạn đường có biển này và cần chọn hướng đi khác đúng quy định.",
     "warning": "Không đi vào đường ngược chiều.",
     "common_violation": "Đi vào đường một chiều theo hướng bị cấm.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["wrong_way"],
-    "example": "Khi gặp biển cấm đi ngược chiều ở đầu đường, người lái không được tiếp tục đi vào dù đường vắng."
+    "penalty": "Đi ngược chiều của đường một chiều hoặc đường có biển Cấm đi ngược chiều..",
+    "penalty_refs": [
+      "wrong_way"
+    ],
+    "example": "Khi gặp biển cấm đi ngược chiều ở đầu đường, người lái không được tiếp tục đi vào dù đường vắng.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "3": {
     "class_id": 3,
@@ -49,8 +100,24 @@
     "driver_action": "Đi đúng hướng mũi tên, không đi vòng sang bên trái nếu không được phép.",
     "warning": "Đi vòng sang bên phải.",
     "common_violation": "Đi sai hướng hiệu lệnh khi tránh đảo giao thông hoặc vật cản.",
-    "penalty": "Mức phạt phụ thuộc loại phương tiện và hành vi cụ thể. Nội dung chỉ mang tính tham khảo.",
-    "example": "Khi gặp đảo phân luồng, hãy điều khiển xe vòng qua bên phải theo chỉ dẫn của biển."
+    "penalty": "Không chấp hành hiệu lệnh, chỉ dẫn của biển báo hiệu hoặc vạch kẻ đường, nếu hành vi đó không thuộc khung phạt chuyên biệt khác..",
+    "example": "Khi gặp đảo phân luồng, hãy điều khiển xe vòng qua bên phải theo chỉ dẫn của biển.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "generic_sign_noncompliance"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "4": {
     "class_id": 4,
@@ -62,8 +129,26 @@
     "driver_action": "Giảm tốc, quan sát các hướng và tuân thủ quy tắc nhường đường tại nơi giao nhau.",
     "warning": "Sắp tới giao lộ đồng cấp.",
     "common_violation": "Không giảm tốc hoặc không nhường đường đúng quy tắc tại giao lộ.",
-    "penalty": "Mức phạt cần đối chiếu quy định hiện hành. Nội dung trong app chỉ để tham khảo học tập.",
-    "example": "Ở giao lộ không có đèn, hãy quan sát kỹ và nhường đường theo quy định trước khi đi tiếp."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Ở giao lộ không có đèn, hãy quan sát kỹ và nhường đường theo quy định trước khi đi tiếp.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "intersection_yield",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "5": {
     "class_id": 5,
@@ -75,8 +160,26 @@
     "driver_action": "Dù đang trên đường ưu tiên, người lái vẫn cần giảm tốc và quan sát để xử lý an toàn.",
     "warning": "Chú ý xe từ đường nhánh.",
     "common_violation": "Chủ quan khi qua giao điểm, không quan sát xe từ đường phụ.",
-    "penalty": "Mức phạt phụ thuộc lỗi thực tế khi tham gia giao thông. Nội dung chỉ mang tính tham khảo.",
-    "example": "Khi thấy xe từ đường phụ chuẩn bị nhập làn, hãy giảm tốc và giữ khoảng cách."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi thấy xe từ đường phụ chuẩn bị nhập làn, hãy giảm tốc và giữ khoảng cách.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "intersection_yield",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "6": {
     "class_id": 6,
@@ -88,8 +191,25 @@
     "driver_action": "Giảm tốc trước khi vào cua, giữ đúng phần đường và không vượt khi tầm nhìn hạn chế.",
     "warning": "Cua nguy hiểm bên trái.",
     "common_violation": "Vào cua quá nhanh hoặc lấn làn ở đoạn cong khuất tầm nhìn.",
-    "penalty": "Mức phạt cần cập nhật theo quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Trên đường đèo, gặp biển này cần giảm tốc sớm trước khi đánh lái vào cua trái."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Trên đường đèo, gặp biển này cần giảm tốc sớm trước khi đánh lái vào cua trái.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "7": {
     "class_id": 7,
@@ -101,9 +221,24 @@
     "driver_action": "Không rẽ trái; chọn hướng đi thẳng, rẽ phải hoặc lộ trình thay thế hợp lệ.",
     "warning": "Không rẽ trái.",
     "common_violation": "Rẽ trái tại nơi có biển cấm rẽ trái.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_left_turn"],
-    "example": "Nếu cần đến địa điểm bên trái, hãy đi tiếp tới điểm quay đầu hoặc tuyến đường được phép."
+    "penalty": "Rẽ trái tại nơi có biển cấm rẽ trái đối với loại phương tiện đang điều khiển..",
+    "penalty_refs": [
+      "no_left_turn"
+    ],
+    "example": "Nếu cần đến địa điểm bên trái, hãy đi tiếp tới điểm quay đầu hoặc tuyến đường được phép.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "8": {
     "class_id": 8,
@@ -115,8 +250,25 @@
     "driver_action": "Quan sát xe buýt ra vào bến, người đi bộ lên xuống xe và không dừng đỗ cản trở.",
     "warning": "Chú ý khu vực bến xe buýt.",
     "common_violation": "Dừng, đỗ hoặc đi sát gây cản trở xe buýt và hành khách.",
-    "penalty": "Mức phạt tùy hành vi dừng đỗ, cản trở giao thông và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Khi xe buýt bật tín hiệu rời bến, giữ khoảng cách và nhường đường khi phù hợp."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi xe buýt bật tín hiệu rời bến, giữ khoảng cách và nhường đường khi phù hợp.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_indication_sign",
+      "bus_stop_stop_park"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "9": {
     "class_id": 9,
@@ -128,8 +280,25 @@
     "driver_action": "Giảm tốc, nhập vòng xuyến đúng làn và đi theo chiều mũi tên.",
     "warning": "Đi theo chiều vòng xuyến.",
     "common_violation": "Đi ngược chiều vòng xuyến hoặc chuyển làn đột ngột khi ra khỏi vòng xuyến.",
-    "penalty": "Mức phạt phụ thuộc lỗi cụ thể và quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Khi vào vòng xuyến, quan sát xe đang lưu thông trong vòng và chọn lối ra phù hợp."
+    "penalty": "Không chấp hành hiệu lệnh, chỉ dẫn của biển báo hiệu hoặc vạch kẻ đường, nếu hành vi đó không thuộc khung phạt chuyên biệt khác. ; Không giảm tốc độ và nhường đường đúng quy tắc tại nơi giao nhau có báo hiệu đi theo vòng xuyến..",
+    "example": "Khi vào vòng xuyến, quan sát xe đang lưu thông trong vòng và chọn lối ra phù hợp.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "generic_sign_noncompliance",
+      "roundabout_yield"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "10": {
     "class_id": 10,
@@ -141,9 +310,24 @@
     "driver_action": "Không dừng, không đỗ tại khu vực có biển; tìm vị trí được phép nếu cần dừng xe.",
     "warning": "Không dừng hoặc đỗ xe.",
     "common_violation": "Dừng xe chờ người hoặc đỗ xe trong khu vực cấm.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_stopping_and_parking"],
-    "example": "Không tấp vào lề để chờ khách dưới biển cấm dừng và đỗ xe."
+    "penalty": "Dừng xe hoặc đỗ xe tại nơi có biển Cấm dừng và đỗ xe..",
+    "penalty_refs": [
+      "no_stopping_and_parking"
+    ],
+    "example": "Không tấp vào lề để chờ khách dưới biển cấm dừng và đỗ xe.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "11": {
     "class_id": 11,
@@ -155,8 +339,24 @@
     "driver_action": "Chỉ quay xe khi đủ điều kiện an toàn, bật tín hiệu và nhường đường cho xe khác.",
     "warning": "Khu vực được phép quay xe.",
     "common_violation": "Quay xe thiếu quan sát hoặc quay xe không đúng phần đường được phép.",
-    "penalty": "Mức phạt phụ thuộc hành vi quay xe và quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Khi thấy biển chỗ quay xe, hãy giảm tốc, bật xi nhan và kiểm tra xe phía sau trước khi quay."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi thấy biển chỗ quay xe, hãy giảm tốc, bật xi nhan và kiểm tra xe phía sau trước khi quay.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_indication_sign"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "12": {
     "class_id": 12,
@@ -168,8 +368,25 @@
     "driver_action": "Quan sát biểu tượng trên biển và điều khiển xe vào đúng làn dành cho phương tiện của mình.",
     "warning": "Đi đúng làn theo loại xe.",
     "common_violation": "Đi sai làn đường quy định cho loại phương tiện.",
-    "penalty": "Mức phạt cần cập nhật theo quy định hiện hành. Nội dung chỉ để tham khảo học tập.",
-    "example": "Xe máy cần đi vào làn dành cho xe máy nếu biển phân làn thể hiện riêng."
+    "penalty": "Không đi đúng phần đường/làn đường hoặc không chấp hành biển phân làn theo phương tiện. ; Không chấp hành hiệu lệnh, chỉ dẫn của biển báo hiệu hoặc vạch kẻ đường, nếu hành vi đó không thuộc khung phạt chuyên biệt khác..",
+    "example": "Xe máy cần đi vào làn dành cho xe máy nếu biển phân làn thể hiện riêng.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "lane_violation",
+      "generic_sign_noncompliance"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "13": {
     "class_id": 13,
@@ -181,8 +398,25 @@
     "driver_action": "Giảm tốc độ, tăng quan sát và giữ khoảng cách với xe phía trước.",
     "warning": "Đi chậm và quan sát.",
     "common_violation": "Không giảm tốc ở khu vực cần đi chậm.",
-    "penalty": "Mức phạt phụ thuộc hành vi cụ thể và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Khi vào khu vực công trường hoặc đông người, hãy giảm tốc theo cảnh báo đi chậm."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi vào khu vực công trường hoặc đông người, hãy giảm tốc theo cảnh báo đi chậm.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "14": {
     "class_id": 14,
@@ -194,9 +428,25 @@
     "driver_action": "Tài xế xe tải cần chọn tuyến đường khác, chú ý biển phụ nếu có quy định tải trọng hoặc thời gian.",
     "warning": "Xe tải không được đi vào.",
     "common_violation": "Xe tải đi vào tuyến đường cấm xe tải.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_truck"],
-    "example": "Xe tải giao hàng cần kiểm tra tuyến thay thế trước khi đi vào phố có biển cấm xe tải."
+    "penalty": "Xe tải đi vào đường hoặc khu vực có biển Cấm xe tải. ; Đi vào khu vực cấm/đường có biển cấm đối với loại phương tiện đang điều khiển..",
+    "penalty_refs": [
+      "no_truck",
+      "prohibited_vehicle_type"
+    ],
+    "example": "Xe tải giao hàng cần kiểm tra tuyến thay thế trước khi đi vào phố có biển cấm xe tải.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "15": {
     "class_id": 15,
@@ -208,8 +458,25 @@
     "driver_action": "Giảm tốc, giữ làn phù hợp và tránh vượt khi đoạn đường hẹp.",
     "warning": "Đường hẹp về phía phải.",
     "common_violation": "Không giảm tốc hoặc ép làn khi đường bị thu hẹp.",
-    "penalty": "Mức phạt phụ thuộc hành vi gây nguy hiểm hoặc vi phạm làn đường. Nội dung chỉ tham khảo.",
-    "example": "Khi làn phải bị thu hẹp do công trình, hãy nhập làn từ sớm và nhường đường hợp lý."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi làn phải bị thu hẹp do công trình, hãy nhập làn từ sớm và nhường đường hợp lý.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "16": {
     "class_id": 16,
@@ -221,8 +488,24 @@
     "driver_action": "Kiểm tra chiều cao xe và hàng hóa; nếu vượt giới hạn thì phải chọn lộ trình khác.",
     "warning": "Chú ý giới hạn chiều cao.",
     "common_violation": "Xe quá chiều cao cho phép vẫn đi vào gầm cầu, hầm hoặc cổng giới hạn.",
-    "penalty": "Mức phạt và trách nhiệm bồi thường cần đối chiếu quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Xe chở hàng cao cần kiểm tra biển giới hạn trước khi đi qua cầu vượt hoặc hầm chui."
+    "penalty": "Điều khiển xe/chở hàng vượt chiều cao, vượt khổ giới hạn hoặc vượt chiều cao tĩnh không cho phép..",
+    "example": "Xe chở hàng cao cần kiểm tra biển giới hạn trước khi đi qua cầu vượt hoặc hầm chui.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "height_over_limit"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "17": {
     "class_id": 17,
@@ -234,9 +517,24 @@
     "driver_action": "Không quay đầu tại đây; tiếp tục đi đến nơi có chỉ dẫn được phép quay xe.",
     "warning": "Không quay đầu xe.",
     "common_violation": "Quay đầu xe tại nơi có biển cấm quay đầu.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_u_turn"],
-    "example": "Nếu đi quá điểm cần rẽ, không quay đầu dưới biển cấm mà tìm vị trí được phép phía trước."
+    "penalty": "Quay đầu xe tại nơi có biển cấm quay đầu hoặc nơi cấm quay đầu đối với loại phương tiện đang điều khiển..",
+    "penalty_refs": [
+      "no_u_turn"
+    ],
+    "example": "Nếu đi quá điểm cần rẽ, không quay đầu dưới biển cấm mà tìm vị trí được phép phía trước.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "18": {
     "class_id": 18,
@@ -248,9 +546,25 @@
     "driver_action": "Người điều khiển các loại xe bị cấm phải chọn tuyến khác theo chỉ dẫn giao thông.",
     "warning": "Ô tô khách và ô tô tải không được vào.",
     "common_violation": "Xe khách hoặc xe tải đi vào tuyến đường bị cấm.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_passenger_car_and_truck"],
-    "example": "Xe khách cần tránh đường nội đô nhỏ có biển cấm ô tô khách và ô tô tải."
+    "penalty": "Ô tô khách hoặc ô tô tải đi vào đường/khu vực có biển cấm. ; Đi vào khu vực cấm/đường có biển cấm đối với loại phương tiện đang điều khiển..",
+    "penalty_refs": [
+      "no_passenger_car_and_truck",
+      "prohibited_vehicle_type"
+    ],
+    "example": "Xe khách cần tránh đường nội đô nhỏ có biển cấm ô tô khách và ô tô tải.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "19": {
     "class_id": 19,
@@ -262,8 +576,25 @@
     "driver_action": "Không rẽ phải hoặc quay đầu; chọn hướng đi khác được phép.",
     "warning": "Không rẽ phải, không quay đầu.",
     "common_violation": "Rẽ phải hoặc quay đầu dù có biển cấm.",
-    "penalty": "Mức phạt cần kiểm chứng theo quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Tại giao lộ có biển này, hãy đi thẳng hoặc theo hướng được phép thay vì rẽ phải."
+    "penalty": "Rẽ phải tại nơi có biển cấm rẽ phải đối với loại phương tiện đang điều khiển. ; Quay đầu xe tại nơi có biển cấm quay đầu hoặc nơi cấm quay đầu đối với loại phương tiện đang điều khiển..",
+    "example": "Tại giao lộ có biển này, hãy đi thẳng hoặc theo hướng được phép thay vì rẽ phải.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_right_turn",
+      "no_u_turn"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "20": {
     "class_id": 20,
@@ -275,9 +606,25 @@
     "driver_action": "Người lái ô tô phải chọn đường khác; chú ý biển phụ nếu có ngoại lệ.",
     "warning": "Ô tô không được đi vào.",
     "common_violation": "Ô tô đi vào đường cấm ô tô.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_car"],
-    "example": "Khi đầu đường có biển cấm ô tô, tài xế ô tô cần rẽ sang tuyến phù hợp."
+    "penalty": "Ô tô đi vào đường hoặc khu vực có biển Cấm ô tô. ; Đi vào khu vực cấm/đường có biển cấm đối với loại phương tiện đang điều khiển..",
+    "penalty_refs": [
+      "no_car",
+      "prohibited_vehicle_type"
+    ],
+    "example": "Khi đầu đường có biển cấm ô tô, tài xế ô tô cần rẽ sang tuyến phù hợp.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "21": {
     "class_id": 21,
@@ -289,8 +636,25 @@
     "driver_action": "Giảm tốc, giữ làn an toàn và nhường đường khi cần nhập làn.",
     "warning": "Đường hẹp về phía trái.",
     "common_violation": "Vượt hoặc lấn làn khi đoạn đường đang thu hẹp.",
-    "penalty": "Mức phạt phụ thuộc hành vi thực tế và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Nếu làn trái bị bó hẹp, hãy chủ động đi chậm và không cố vượt xe phía trước."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Nếu làn trái bị bó hẹp, hãy chủ động đi chậm và không cố vượt xe phía trước.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "22": {
     "class_id": 22,
@@ -302,8 +666,25 @@
     "driver_action": "Giảm tốc trước khi qua gồ, giữ chắc tay lái và chú ý xe phía sau.",
     "warning": "Có gồ giảm tốc phía trước.",
     "common_violation": "Đi nhanh qua gồ giảm tốc gây mất an toàn hoặc hư hại phương tiện.",
-    "penalty": "Mức phạt nếu có phụ thuộc hành vi vi phạm liên quan. Nội dung chỉ tham khảo.",
-    "example": "Trước cổng trường hoặc khu dân cư, giảm tốc sớm khi thấy biển gồ giảm tốc."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Trước cổng trường hoặc khu dân cư, giảm tốc sớm khi thấy biển gồ giảm tốc.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "23": {
     "class_id": 23,
@@ -315,8 +696,24 @@
     "driver_action": "Người điều khiển phương tiện bị cấm cần chọn tuyến đường khác.",
     "warning": "Xe hai và ba bánh không được vào.",
     "common_violation": "Xe thuộc nhóm bị cấm vẫn đi vào khu vực có biển.",
-    "penalty": "Mức phạt cần đối chiếu quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Xe máy hoặc xe ba bánh cần tránh tuyến có biển cấm tương ứng."
+    "penalty": "Đi vào khu vực cấm/đường có biển cấm đối với loại phương tiện đang điều khiển..",
+    "example": "Xe máy hoặc xe ba bánh cần tránh tuyến có biển cấm tương ứng.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "prohibited_vehicle_type"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "24": {
     "class_id": 24,
@@ -328,8 +725,24 @@
     "driver_action": "Giảm tốc, chuẩn bị dừng xe và tuân theo hướng dẫn của lực lượng chức năng hoặc biển phụ.",
     "warning": "Chuẩn bị dừng để kiểm tra.",
     "common_violation": "Không chấp hành yêu cầu dừng kiểm tra tại vị trí quy định.",
-    "penalty": "Mức phạt phụ thuộc tình huống và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Tại trạm kiểm tra tải trọng, tài xế cần đi đúng làn và dừng theo hiệu lệnh."
+    "penalty": "Không chấp hành hiệu lệnh/hướng dẫn kiểm tra, kiểm soát tại vị trí có biển Kiểm tra hoặc của người kiểm soát giao thông..",
+    "example": "Tại trạm kiểm tra tải trọng, tài xế cần đi đúng làn và dừng theo hiệu lệnh.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "inspection_checkpoint"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "25": {
     "class_id": 25,
@@ -341,8 +754,25 @@
     "driver_action": "Xe máy đi theo phần đường được chỉ dẫn; phương tiện khác cần quan sát biển chính và biển phụ.",
     "warning": "Khu vực hoặc làn dành cho xe máy.",
     "common_violation": "Đi sai phần đường dành cho loại phương tiện.",
-    "penalty": "Mức phạt cần cập nhật theo quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Khi có biển phụ xe máy dưới biển phân làn, xe máy cần đi đúng làn được chỉ định."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi có biển phụ xe máy dưới biển phân làn, xe máy cần đi đúng làn được chỉ định.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_indication_sign",
+      "generic_sign_noncompliance"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "26": {
     "class_id": 26,
@@ -354,8 +784,25 @@
     "driver_action": "Giảm tốc, quan sát hướng tránh và không chuyển làn đột ngột.",
     "warning": "Có chướng ngại vật phía trước.",
     "common_violation": "Không giảm tốc hoặc tránh vật cản thiếu quan sát.",
-    "penalty": "Mức phạt phụ thuộc hành vi gây nguy hiểm nếu có. Nội dung chỉ tham khảo.",
-    "example": "Khi gặp vật cản do công trình, hãy đi chậm và làm theo biển dẫn hướng."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi gặp vật cản do công trình, hãy đi chậm và làm theo biển dẫn hướng.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "27": {
     "class_id": 27,
@@ -367,8 +814,26 @@
     "driver_action": "Giảm tốc, chú ý hai bên đường và sẵn sàng dừng xe khi có trẻ em xuất hiện.",
     "warning": "Chú ý trẻ em qua đường.",
     "common_violation": "Đi nhanh hoặc thiếu quan sát trong khu vực có trẻ em.",
-    "penalty": "Mức phạt phụ thuộc hành vi cụ thể và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Khi đi qua cổng trường, luôn giảm tốc và quan sát học sinh bất ngờ băng qua đường."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi đi qua cổng trường, luôn giảm tốc và quan sát học sinh bất ngờ băng qua đường.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "pedestrian_yield",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "28": {
     "class_id": 28,
@@ -380,8 +845,25 @@
     "driver_action": "Người lái cần đọc kèm biển chính để biết quy định cụ thể cho nhóm xe này.",
     "warning": "Chú ý quy định cho xe tải và xe công.",
     "common_violation": "Không đọc biển phụ, dẫn đến hiểu sai đối tượng áp dụng.",
-    "penalty": "Mức phạt phụ thuộc biển chính đi kèm và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Nếu biển phụ nằm dưới biển cấm, lệnh cấm có thể áp dụng riêng cho xe tải và xe công."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Nếu biển phụ nằm dưới biển cấm, lệnh cấm có thể áp dụng riêng cho xe tải và xe công.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_indication_sign",
+      "generic_sign_noncompliance"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "29": {
     "class_id": 29,
@@ -393,9 +875,25 @@
     "driver_action": "Người đi mô tô, xe máy cần chọn tuyến khác và tuân thủ chỉ dẫn thay thế.",
     "warning": "Mô tô và xe máy không được vào.",
     "common_violation": "Mô tô hoặc xe máy đi vào đường cấm.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_motorbike"],
-    "example": "Xe máy không đi vào đoạn đường có biển cấm mô tô, xe máy dù lộ trình ngắn hơn."
+    "penalty": "Xe máy hoặc mô tô đi vào đường hoặc khu vực có biển Cấm mô tô/xe máy. ; Đi vào khu vực cấm/đường có biển cấm đối với loại phương tiện đang điều khiển..",
+    "penalty_refs": [
+      "no_motorbike",
+      "prohibited_vehicle_type"
+    ],
+    "example": "Xe máy không đi vào đoạn đường có biển cấm mô tô, xe máy dù lộ trình ngắn hơn.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "30": {
     "class_id": 30,
@@ -407,8 +905,25 @@
     "driver_action": "Xe tải đi theo phần đường được chỉ dẫn; các xe khác cần tuân thủ biển chính và biển phụ.",
     "warning": "Khu vực hoặc làn dành cho xe tải.",
     "common_violation": "Đi sai làn hoặc hiểu sai đối tượng áp dụng của biển phụ.",
-    "penalty": "Mức phạt phụ thuộc hành vi và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Khi biển phụ chỉ xe tải đặt dưới biển phân làn, xe tải cần đi đúng làn tương ứng."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi biển phụ chỉ xe tải đặt dưới biển phân làn, xe tải cần đi đúng làn tương ứng.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_indication_sign",
+      "generic_sign_noncompliance"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "31": {
     "class_id": 31,
@@ -420,8 +935,24 @@
     "driver_action": "Tuân thủ tốc độ, làn đường, tín hiệu giao thông và các quy định hiện hành.",
     "warning": "Khu vực có camera giám sát.",
     "common_violation": "Vượt tốc độ, vượt đèn đỏ hoặc đi sai làn bị camera ghi nhận.",
-    "penalty": "Mức phạt phụ thuộc vi phạm được ghi nhận và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Khi đi qua nút giao có camera, cần tuân thủ đèn tín hiệu và vạch dừng."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi đi qua nút giao có camera, cần tuân thủ đèn tín hiệu và vạch dừng.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_indication_sign"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "32": {
     "class_id": 32,
@@ -433,9 +964,24 @@
     "driver_action": "Không rẽ phải; đi theo hướng được phép hoặc chọn lộ trình thay thế.",
     "warning": "Không rẽ phải.",
     "common_violation": "Rẽ phải tại nơi có biển cấm rẽ phải.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_right_turn"],
-    "example": "Nếu cần rẽ phải, hãy đi tiếp tới điểm cho phép rẽ hoặc quay lại bằng tuyến khác."
+    "penalty": "Rẽ phải tại nơi có biển cấm rẽ phải đối với loại phương tiện đang điều khiển..",
+    "penalty_refs": [
+      "no_right_turn"
+    ],
+    "example": "Nếu cần rẽ phải, hãy đi tiếp tới điểm cho phép rẽ hoặc quay lại bằng tuyến khác.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "33": {
     "class_id": 33,
@@ -447,8 +993,25 @@
     "driver_action": "Giảm tốc từ sớm, giữ làn và tránh vượt trong toàn bộ đoạn cong liên tiếp.",
     "warning": "Nhiều khúc cua nguy hiểm phía trước.",
     "common_violation": "Vào cua nhanh, lấn làn hoặc vượt xe ở đoạn cong liên tiếp.",
-    "penalty": "Mức phạt phụ thuộc hành vi vi phạm cụ thể. Nội dung chỉ tham khảo học tập.",
-    "example": "Trên đường đèo, duy trì tốc độ thấp ổn định khi thấy biển cảnh báo nhiều khúc cua."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Trên đường đèo, duy trì tốc độ thấp ổn định khi thấy biển cảnh báo nhiều khúc cua.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "34": {
     "class_id": 34,
@@ -460,8 +1023,24 @@
     "driver_action": "Người điều khiển phương tiện thuộc nhóm bị cấm cần chọn tuyến khác.",
     "warning": "Xe sơ-mi rơ-moóc không được vào.",
     "common_violation": "Xe thuộc nhóm bị cấm đi vào khu vực hạn chế.",
-    "penalty": "Mức phạt cần cập nhật theo quy định hiện hành và loại phương tiện. Nội dung chỉ tham khảo.",
-    "example": "Xe đầu kéo kéo sơ-mi rơ-moóc cần tránh tuyến đường có biển cấm này."
+    "penalty": "Đi vào khu vực cấm/đường có biển cấm đối với loại phương tiện đang điều khiển..",
+    "example": "Xe đầu kéo kéo sơ-mi rơ-moóc cần tránh tuyến đường có biển cấm này.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "prohibited_vehicle_type"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "35": {
     "class_id": 35,
@@ -473,8 +1052,25 @@
     "driver_action": "Không rẽ trái hoặc phải; chỉ đi theo hướng được phép theo tổ chức giao thông.",
     "warning": "Không rẽ trái, không rẽ phải.",
     "common_violation": "Rẽ vào một trong hai hướng bị cấm tại giao lộ.",
-    "penalty": "Mức phạt cần kiểm chứng theo quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Tại nút giao có biển này, người lái thường phải đi thẳng nếu không có chỉ dẫn khác."
+    "penalty": "Rẽ trái tại nơi có biển cấm rẽ trái đối với loại phương tiện đang điều khiển. ; Rẽ phải tại nơi có biển cấm rẽ phải đối với loại phương tiện đang điều khiển..",
+    "example": "Tại nút giao có biển này, người lái thường phải đi thẳng nếu không có chỉ dẫn khác.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_left_turn",
+      "no_right_turn"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "36": {
     "class_id": 36,
@@ -486,8 +1082,25 @@
     "driver_action": "Không đi thẳng hoặc rẽ phải; chọn hướng còn lại được phép nếu phù hợp.",
     "warning": "Không đi thẳng, không rẽ phải.",
     "common_violation": "Đi thẳng hoặc rẽ phải trái với lệnh cấm.",
-    "penalty": "Mức phạt phụ thuộc hành vi và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Khi gặp biển này trước giao lộ, hãy chuẩn bị chuyển hướng theo phương án được phép."
+    "penalty": "Đi thẳng tại nơi có biển cấm đi thẳng đối với loại phương tiện đang điều khiển. ; Rẽ phải tại nơi có biển cấm rẽ phải đối với loại phương tiện đang điều khiển..",
+    "example": "Khi gặp biển này trước giao lộ, hãy chuẩn bị chuyển hướng theo phương án được phép.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_straight",
+      "no_right_turn"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "37": {
     "class_id": 37,
@@ -499,8 +1112,26 @@
     "driver_action": "Giảm tốc, quan sát xe từ bên trái và giữ khoảng cách an toàn.",
     "warning": "Sắp có ngã ba bên trái.",
     "common_violation": "Không quan sát xe nhập từ nhánh bên trái khi qua giao lộ.",
-    "penalty": "Mức phạt tùy lỗi cụ thể theo quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Trước ngã ba bên trái, hãy giảm tốc và chú ý xe rẽ hoặc nhập làn."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Trước ngã ba bên trái, hãy giảm tốc và chú ý xe rẽ hoặc nhập làn.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "intersection_yield",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "38": {
     "class_id": 38,
@@ -512,10 +1143,25 @@
     "driver_action": "Điều chỉnh tốc độ không vượt quá 50 km/h và chú ý điều kiện đường thực tế.",
     "warning": "Không vượt quá 50 km/h.",
     "common_violation": "Chạy quá tốc độ tối đa cho phép.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty": "Chạy quá tốc độ tối đa ghi trên biển báo P.127..",
     "speed_limit_value": 50,
-    "penalty_refs": ["speed_limit"],
-    "example": "Nếu đồng hồ xe đang trên 50 km/h khi vào khu vực có biển, cần giảm tốc ngay."
+    "penalty_refs": [
+      "speed_limit"
+    ],
+    "example": "Nếu đồng hồ xe đang trên 50 km/h khi vào khu vực có biển, cần giảm tốc ngay.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "39": {
     "class_id": 39,
@@ -527,10 +1173,25 @@
     "driver_action": "Duy trì tốc độ không vượt quá 60 km/h và giảm tốc thêm nếu điều kiện không an toàn.",
     "warning": "Không vượt quá 60 km/h.",
     "common_violation": "Đi nhanh hơn tốc độ tối đa được quy định.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty": "Chạy quá tốc độ tối đa ghi trên biển báo P.127..",
     "speed_limit_value": 60,
-    "penalty_refs": ["speed_limit"],
-    "example": "Trên đoạn có biển 60 km/h, xe cần giữ tốc độ bằng hoặc thấp hơn giới hạn này."
+    "penalty_refs": [
+      "speed_limit"
+    ],
+    "example": "Trên đoạn có biển 60 km/h, xe cần giữ tốc độ bằng hoặc thấp hơn giới hạn này.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "40": {
     "class_id": 40,
@@ -542,10 +1203,25 @@
     "driver_action": "Không vượt quá 80 km/h và vẫn phải giảm tốc khi thời tiết, tầm nhìn hoặc mật độ xe không đảm bảo.",
     "warning": "Không vượt quá 80 km/h.",
     "common_violation": "Chạy quá tốc độ tối đa ghi trên biển.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty": "Chạy quá tốc độ tối đa ghi trên biển báo P.127..",
     "speed_limit_value": 80,
-    "penalty_refs": ["speed_limit"],
-    "example": "Dù đường thoáng, người lái vẫn không được vượt quá 80 km/h trong phạm vi biển."
+    "penalty_refs": [
+      "speed_limit"
+    ],
+    "example": "Dù đường thoáng, người lái vẫn không được vượt quá 80 km/h trong phạm vi biển.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "41": {
     "class_id": 41,
@@ -557,10 +1233,25 @@
     "driver_action": "Giảm tốc và duy trì tốc độ không vượt quá 40 km/h.",
     "warning": "Không vượt quá 40 km/h.",
     "common_violation": "Không giảm tốc khi vào khu vực giới hạn 40 km/h.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
+    "penalty": "Chạy quá tốc độ tối đa ghi trên biển báo P.127..",
     "speed_limit_value": 40,
-    "penalty_refs": ["speed_limit"],
-    "example": "Gần khu dân cư hoặc trường học, biển 40 km/h yêu cầu xe đi chậm hơn bình thường."
+    "penalty_refs": [
+      "speed_limit"
+    ],
+    "example": "Gần khu dân cư hoặc trường học, biển 40 km/h yêu cầu xe đi chậm hơn bình thường.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "42": {
     "class_id": 42,
@@ -572,8 +1263,24 @@
     "driver_action": "Chuẩn bị làn phù hợp và rẽ trái theo hướng hiệu lệnh, không đi thẳng hoặc rẽ hướng khác.",
     "warning": "Chỉ được rẽ trái.",
     "common_violation": "Đi không đúng hướng hiệu lệnh của biển.",
-    "penalty": "Mức phạt cần cập nhật theo quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Tại giao lộ có biển này, người lái cần bật tín hiệu và rẽ trái đúng làn."
+    "penalty": "Không chấp hành hiệu lệnh, chỉ dẫn của biển báo hiệu hoặc vạch kẻ đường, nếu hành vi đó không thuộc khung phạt chuyên biệt khác..",
+    "example": "Tại giao lộ có biển này, người lái cần bật tín hiệu và rẽ trái đúng làn.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "generic_sign_noncompliance"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "43": {
     "class_id": 43,
@@ -585,8 +1292,26 @@
     "driver_action": "Xe cao cần kiểm tra chiều cao trước khi đi tiếp và chọn lộ trình khác nếu không phù hợp.",
     "warning": "Chú ý chiều cao tĩnh không.",
     "common_violation": "Xe cao đi vào khu vực không đủ tĩnh không, gây va chạm.",
-    "penalty": "Mức phạt và trách nhiệm liên quan cần đối chiếu quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Xe tải chở hàng cao phải đọc trị số tĩnh không trước khi qua hầm chui."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Xe tải chở hàng cao phải đọc trị số tĩnh không trước khi qua hầm chui.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "height_over_limit",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "44": {
     "class_id": 44,
@@ -598,8 +1323,25 @@
     "driver_action": "Giảm tốc, tăng quan sát và chú ý biển phụ hoặc tình huống thực tế trên đường.",
     "warning": "Có nguy hiểm khác phía trước.",
     "common_violation": "Chủ quan, không giảm tốc khi có cảnh báo nguy hiểm chung.",
-    "penalty": "Mức phạt phụ thuộc hành vi vi phạm cụ thể nếu xảy ra. Nội dung chỉ tham khảo.",
-    "example": "Khi gặp biển này kèm biển phụ công trường, hãy giảm tốc và đi theo hướng dẫn."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi gặp biển này kèm biển phụ công trường, hãy giảm tốc và đi theo hướng dẫn.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "45": {
     "class_id": 45,
@@ -611,8 +1353,25 @@
     "driver_action": "Đi đúng chiều được chỉ dẫn, không quay đầu hoặc đi ngược chiều nếu không được phép.",
     "warning": "Đây là đường một chiều.",
     "common_violation": "Đi ngược chiều trên đường một chiều.",
-    "penalty": "Mức phạt cần được cập nhật theo quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Khi vào đường một chiều, hãy chú ý hướng lưu thông và chọn lộ trình phù hợp nếu cần quay lại."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi vào đường một chiều, hãy chú ý hướng lưu thông và chọn lộ trình phù hợp nếu cần quay lại.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_indication_sign",
+      "wrong_way"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "46": {
     "class_id": 46,
@@ -624,9 +1383,24 @@
     "driver_action": "Không đỗ xe tại khu vực có biển; tìm bãi hoặc vị trí được phép đỗ.",
     "warning": "Không đỗ xe tại đây.",
     "common_violation": "Đỗ xe trong khu vực cấm đỗ.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_parking"],
-    "example": "Không để xe qua đêm hoặc chờ lâu dưới biển cấm đỗ xe."
+    "penalty": "Đỗ xe tại nơi có biển Cấm đỗ xe..",
+    "penalty_refs": [
+      "no_parking"
+    ],
+    "example": "Không để xe qua đêm hoặc chờ lâu dưới biển cấm đỗ xe.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "47": {
     "class_id": 47,
@@ -638,8 +1412,24 @@
     "driver_action": "Ô tô không quay đầu; nếu cần rẽ trái thì thực hiện đúng làn và tín hiệu.",
     "warning": "Ô tô không được quay đầu.",
     "common_violation": "Ô tô quay đầu tại nơi chỉ cho phép rẽ trái.",
-    "penalty": "Mức phạt cần đối chiếu quy định hiện hành. Nội dung chỉ mang tính tham khảo.",
-    "example": "Tại giao lộ có biển này, ô tô có thể rẽ trái nhưng không được quay đầu về hướng ngược lại."
+    "penalty": "Quay đầu xe tại nơi có biển cấm quay đầu hoặc nơi cấm quay đầu đối với loại phương tiện đang điều khiển..",
+    "example": "Tại giao lộ có biển này, ô tô có thể rẽ trái nhưng không được quay đầu về hướng ngược lại.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_u_turn"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "48": {
     "class_id": 48,
@@ -651,8 +1441,26 @@
     "driver_action": "Giảm tốc, quan sát tín hiệu đường sắt và dừng lại khi rào chắn hoặc tín hiệu yêu cầu.",
     "warning": "Chú ý giao cắt đường sắt.",
     "common_violation": "Cố vượt qua đường sắt khi rào chắn đang đóng hoặc tín hiệu cảnh báo đã bật.",
-    "penalty": "Mức phạt và rủi ro rất nghiêm trọng; cần đối chiếu quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Khi chuông báo và rào chắn hạ xuống, phải dừng trước vạch an toàn."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi chuông báo và rào chắn hạ xuống, phải dừng trước vạch an toàn.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "railway_crossing_stop",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "49": {
     "class_id": 49,
@@ -664,9 +1472,25 @@
     "driver_action": "Không rẽ trái, không quay đầu; chọn hướng đi khác được phép.",
     "warning": "Không rẽ trái, không quay đầu.",
     "common_violation": "Rẽ trái hoặc quay đầu trái với biển cấm.",
-    "penalty": "Xem mức phạt tham khảo trong dữ liệu penalties.json.",
-    "penalty_refs": ["no_left_turn_and_no_u_turn"],
-    "example": "Nếu cần quay lại, hãy đi tiếp tới điểm quay xe hợp lệ thay vì quay đầu tại đây."
+    "penalty": "Rẽ trái tại nơi có biển cấm rẽ trái đối với loại phương tiện đang điều khiển. ; Quay đầu xe tại nơi có biển cấm quay đầu hoặc nơi cấm quay đầu đối với loại phương tiện đang điều khiển..",
+    "penalty_refs": [
+      "no_left_turn",
+      "no_u_turn"
+    ],
+    "example": "Nếu cần quay lại, hãy đi tiếp tới điểm quay xe hợp lệ thay vì quay đầu tại đây.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": true
   },
   "50": {
     "class_id": 50,
@@ -678,8 +1502,25 @@
     "driver_action": "Giảm tốc trước khi vào cua, giữ đúng làn và tránh vượt ở đoạn tầm nhìn hạn chế.",
     "warning": "Cua nguy hiểm bên phải.",
     "common_violation": "Vào cua nhanh, lấn làn hoặc vượt xe tại đoạn cong.",
-    "penalty": "Mức phạt phụ thuộc hành vi cụ thể và quy định hiện hành. Nội dung chỉ tham khảo.",
-    "example": "Trước khúc cua phải khuất tầm nhìn, cần giảm tốc và giữ khoảng cách."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Trước khúc cua phải khuất tầm nhìn, cần giảm tốc và giữ khoảng cách.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   },
   "51": {
     "class_id": 51,
@@ -691,7 +1532,25 @@
     "driver_action": "Giảm tốc, quan sát xe xung quanh và tránh chướng ngại vật theo phía bên phải.",
     "warning": "Tránh chướng ngại vật sang bên phải.",
     "common_violation": "Tránh vật cản sai hướng hoặc chuyển làn đột ngột.",
-    "penalty": "Mức phạt phụ thuộc hành vi gây nguy hiểm hoặc vi phạm làn đường. Nội dung chỉ tham khảo.",
-    "example": "Khi gặp vật cản giữa đường, hãy đi chậm và vòng tránh sang phải theo chỉ dẫn."
+    "penalty": "Không có mức phạt trực tiếp chỉ vì gặp biển này; nếu người lái không tuân thủ quy tắc/hành vi liên quan thì áp dụng các mức phạt trong penalty_refs.",
+    "example": "Khi gặp vật cản giữa đường, hãy đi chậm và vòng tránh sang phải theo chỉ dẫn.",
+    "legal_sign_basis": {
+      "document": "QCVN 41:2024/BGTVT ban hành kèm Thông tư 51/2024/TT-BGTVT",
+      "effective_from": "2025-01-01",
+      "note": "Dùng để xác định nhóm biển, mã biển, ý nghĩa và yêu cầu chấp hành báo hiệu đường bộ."
+    },
+    "legal_penalty_basis": {
+      "document": "Nghị định 168/2024/NĐ-CP",
+      "effective_from": "2025-01-01",
+      "verified_at": "2026-05-21",
+      "note": "Mức phạt được mô hình hóa theo hành vi phổ biến liên quan đến biển; thực tế phụ thuộc loại phương tiện, tình huống và biên bản xử lý."
+    },
+    "penalty_refs": [
+      "no_direct_penalty_warning_sign",
+      "generic_sign_noncompliance",
+      "unsafe_driving_causing_accident"
+    ],
+    "data_status": "legal_enriched_52_classes",
+    "has_direct_penalty": false
   }
 }
