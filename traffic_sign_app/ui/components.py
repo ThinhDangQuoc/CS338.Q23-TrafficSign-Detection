@@ -76,6 +76,19 @@ def show_sign_info(
     _render_penalty_section(sign_info, vehicle_type, key_prefix)
 
 
+def render_explanation_card(sign_info: dict) -> None:
+    """Render a focused explanation card for the selected sign."""
+    with st.container(border=True):
+        st.markdown("#### Giải thích biển báo")
+        st.info(generate_warning(sign_info))
+        st.markdown(generate_full_explanation(sign_info))
+
+
+def render_penalty_card(sign_info: dict, vehicle_type: str, key_prefix: str) -> None:
+    """Render a focused penalty card for the selected sign."""
+    _render_penalty_section(sign_info, vehicle_type, key_prefix)
+
+
 def speak_sign(sign_info: dict) -> None:
     """Create and play a speech warning for one sign."""
     audio_path = text_to_speech(generate_speech_text(sign_info), AUDIO_DIR)

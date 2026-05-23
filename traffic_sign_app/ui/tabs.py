@@ -16,7 +16,7 @@ from PIL import Image
 
 from traffic_sign_app.config import AUDIO_DIR, BASE_DIR, DB_PATH, MODEL_PATH, TEMP_DIR
 from traffic_sign_app.core.detector import detect_image, draw_detections
-from traffic_sign_app.core.warning_engine import generate_speech_text
+from traffic_sign_app.core.warning_engine import generate_speech_text, generate_warning
 from traffic_sign_app.services.chatbot import answer_question
 from traffic_sign_app.services.knowledge_base import (
     clear_history,
@@ -27,7 +27,13 @@ from traffic_sign_app.services.knowledge_base import (
 )
 from traffic_sign_app.services.reporting import export_history_csv, get_summary_stats
 from traffic_sign_app.services.speech import should_speak, text_to_speech
-from traffic_sign_app.ui.components import detect_and_render_image, show_sign_info, speak_sign
+from traffic_sign_app.ui.components import (
+    detect_and_render_image,
+    render_explanation_card,
+    render_penalty_card,
+    show_sign_info,
+    speak_sign,
+)
 from traffic_sign_app.ui.state import save_detection_with_cooldown, sign_label
 
 
@@ -68,23 +74,47 @@ def render_image_tab(
 ) -> None:
     """Render image upload and detection workflow."""
     st.header("Nhận diện từ ảnh")
-    st.caption("Upload ảnh biển báo, chạy YOLO và xem giải thích kèm mức phạt tham khảo theo phương tiện đã chọn.")
-    uploaded_image = st.file_uploader("Chọn ảnh biển báo", type=["jpg", "jpeg", "png", "bmp", "webp"])
+    st.caption("Tải ảnh để AI nhận diện biển báo và xem giải thích học tập.")
+    st.markdown(
+        """
+        <div class="stepper">
+            <div class="step"><strong>1.</strong> Tải ảnh</div>
+            <div class="step"><strong>2.</strong> AI nhận diện</div>
+            <div class="step"><strong>3.</strong> Xem giải thích</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    with st.container(border=True):
+        st.markdown("<div class=\"panel-title\">Chọn ảnh biển báo</div>", unsafe_allow_html=True)
+        uploaded_image = st.file_uploader("Chọn ảnh biển báo", type=["jpg", "jpeg", "png", "bmp", "webp"])
+        run_detect = st.button("Chạy nhận diện", type="primary")
+
+    if "image_results" not in st.session_state:
+        st.session_state.image_results = None
+    if "image_file_name" not in st.session_state:
+        st.session_state.image_file_name = None
+
     if not uploaded_image:
+        st.markdown(
+            "<div class=\"empty-state\">Chọn ảnh để bắt đầu quá trình nhận diện.</div>",
+            unsafe_allow_html=True,
+        )
         return
+
+    if st.session_state.image_file_name != uploaded_image.name:
+        st.session_state.image_file_name = uploaded_image.name
+        st.session_state.image_results = None
 
     try:
         image = Image.open(uploaded_image).convert("RGB")
         image_rgb = np.array(image)
-        col_a, col_b = st.columns(2)
-        with col_a.container(border=True):
-            st.image(image_rgb, caption="Ảnh gốc", use_container_width=True)
-
         if model is None:
-            st.info("Chưa thể detect vì model chưa sẵn sàng.")
+            st.info("Chưa thể nhận diện vì model chưa sẵn sàng.")
             return
 
-        if st.button("Nhận diện ảnh", type="primary"):
+        if run_detect:
             with st.spinner("Đang nhận diện biển báo..."):
                 start = time.time()
                 detections, annotated = detect_and_render_image(
@@ -95,29 +125,80 @@ def render_image_tab(
                     img_size,
                 )
                 elapsed = time.time() - start
-            with col_b.container(border=True):
-                st.image(annotated, caption="Kết quả YOLO", use_container_width=True)
+            st.session_state.image_results = {
+                "image": image_rgb,
+                "annotated": annotated,
+                "detections": detections,
+                "elapsed": elapsed,
+            }
 
-            if show_performance:
-                _render_detection_metrics(_detection_stats(detections, elapsed))
+        results = st.session_state.image_results
+        if not results:
+            st.markdown(
+                "<div class=\"empty-state\">Tải ảnh và bấm “Chạy nhận diện” để xem kết quả.</div>",
+                unsafe_allow_html=True,
+            )
+            return
 
-            if not detections:
-                st.warning("Không phát hiện biển báo trong ảnh.")
+        detections = results["detections"]
+        col_a, col_b = st.columns(2)
+        with col_a.container(border=True):
+            st.markdown("<div class=\"panel-title\">Ảnh gốc</div>", unsafe_allow_html=True)
+            st.image(results["image"], use_container_width=True)
+        with col_b.container(border=True):
+            st.markdown("<div class=\"panel-title\">Kết quả AI</div>", unsafe_allow_html=True)
+            st.image(results["annotated"], use_container_width=True)
 
-            for idx, detection in enumerate(detections):
-                sign_info = get_sign_info(detection["class_id"], signs_data)
-                st.session_state.last_sign_info = sign_info
-                save_detection_with_cooldown(detection, sign_info, "image", seconds=1, enabled=save_history)
-                with st.expander(sign_info.get("class_name", "Biển báo"), expanded=True):
-                    show_sign_info(
-                        sign_info,
-                        detection,
-                        selected_vehicle_type,
-                        key_prefix=f"img_{idx}_{detection['class_id']}",
-                    )
-                    button_key = f"img_speak_{detection['class_id']}_{idx}"
-                    if enable_speech and st.button("Đọc cảnh báo", key=button_key):
-                        speak_sign(sign_info)
+        if show_performance:
+            with st.expander("Hiệu năng inference", expanded=False):
+                _render_detection_metrics(_detection_stats(detections, results["elapsed"]))
+
+        if not detections:
+            st.markdown(
+                "<div class=\"empty-state\">Không phát hiện biển báo trong ảnh.</div>",
+                unsafe_allow_html=True,
+            )
+            return
+
+        for idx, detection in enumerate(detections):
+            sign_info = get_sign_info(detection["class_id"], signs_data)
+            st.session_state.last_sign_info = sign_info
+            save_detection_with_cooldown(detection, sign_info, "image", seconds=1, enabled=save_history)
+
+        primary_detection = max(detections, key=lambda item: float(item.get("confidence", 0.0)))
+        primary_sign = get_sign_info(primary_detection["class_id"], signs_data)
+        st.session_state.last_sign_info = primary_sign
+
+        info_col, penalty_col = st.columns(2)
+        with info_col:
+            render_explanation_card(primary_sign)
+        with penalty_col:
+            render_penalty_card(primary_sign, selected_vehicle_type, key_prefix="img_primary")
+
+        st.subheader("Tóm tắt kết quả")
+        rows = []
+        for detection in detections:
+            sign_info = get_sign_info(detection["class_id"], signs_data)
+            short_name = sign_info.get("short_name") or detection.get("class_name", "Biển báo")
+            rows.append(
+                {
+                    "Biển báo": short_name,
+                    "Độ tin cậy": f"{float(detection.get('confidence', 0.0)):.2f}",
+                    "Ý nghĩa": sign_info.get("meaning", ""),
+                    "Cảnh báo": generate_warning(sign_info),
+                }
+            )
+        summary_df = pd.DataFrame(rows)
+        st.dataframe(summary_df, use_container_width=True, hide_index=True)
+
+        action_col_1, action_col_2, action_col_3 = st.columns(3)
+        action_col_1.button("Xem chi tiết", disabled=True, help="Sắp có trong phiên bản tiếp theo.")
+        action_col_2.button(
+            "Lưu lịch sử",
+            disabled=True,
+            help="Lịch sử được lưu tự động khi bật tùy chọn ở sidebar.",
+        )
+        action_col_3.button("Tạo quiz", disabled=True, help="Sắp có trong phiên bản tiếp theo.")
     except Exception as exc:
         st.error(f"Không xử lý được ảnh upload: {exc}")
 

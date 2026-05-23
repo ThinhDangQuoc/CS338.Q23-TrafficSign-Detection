@@ -64,92 +64,138 @@ def _inject_styles() -> None:
     st.markdown(
         """
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+        html, body, .stApp {
+            font-family: "Be Vietnam Pro", "Noto Sans", "DejaVu Sans", sans-serif;
+        }
+        .material-icons, .material-symbols-outlined {
+            font-family: "Material Icons", "Material Symbols Outlined" !important;
+        }
+        body {
+            background: radial-gradient(1200px 520px at 10% -10%, rgba(14, 165, 233, 0.16), transparent 60%),
+                        radial-gradient(900px 380px at 90% 10%, rgba(124, 58, 237, 0.12), transparent 55%),
+                        #0b1220;
+            color: #e2e8f0;
+        }
         .block-container {
-            padding-top: 1.4rem;
-            padding-bottom: 2.4rem;
+            padding-top: 1.1rem;
+            padding-bottom: 2.2rem;
         }
         .app-hero {
-            border: 1px solid rgba(148, 163, 184, 0.22);
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(31, 41, 55, 0.96));
-            border-radius: 10px;
-            padding: 1.25rem 1.35rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: linear-gradient(135deg, rgba(10, 18, 32, 0.98), rgba(18, 28, 46, 0.96));
+            border-radius: 14px;
+            padding: 1rem 1.35rem;
+            margin-bottom: 0.9rem;
+            box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28);
         }
         .app-hero h1 {
             margin: 0 0 0.35rem 0;
-            font-size: 2rem;
-            line-height: 1.18;
-            letter-spacing: 0;
+            font-size: 1.85rem;
+            line-height: 1.22;
+            letter-spacing: -0.01em;
             color: #f8fafc;
         }
         .app-hero p {
             margin: 0;
-            color: #cbd5e1;
-            max-width: 860px;
-            font-size: 0.98rem;
-        }
-        .status-row {
-            display: flex;
-            gap: 0.55rem;
-            flex-wrap: wrap;
-            margin-top: 0.9rem;
-        }
-        .status-badge {
-            border: 1px solid rgba(148, 163, 184, 0.28);
-            border-radius: 999px;
-            padding: 0.28rem 0.68rem;
-            color: #e2e8f0;
-            background: rgba(15, 23, 42, 0.72);
-            font-size: 0.86rem;
-        }
-        .status-badge.ready {
-            border-color: rgba(34, 197, 94, 0.5);
-            color: #bbf7d0;
-        }
-        .status-badge.warn {
-            border-color: rgba(245, 158, 11, 0.55);
-            color: #fde68a;
+            color: #94a3b8;
+            max-width: 880px;
+            font-size: 0.95rem;
         }
         .legal-note {
             border-left: 3px solid #38bdf8;
             color: #cbd5e1;
-            background: rgba(15, 23, 42, 0.62);
-            padding: 0.72rem 0.9rem;
-            border-radius: 6px;
-            margin: 0.55rem 0 1rem 0;
+            background: rgba(9, 16, 30, 0.68);
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            margin: 0.6rem 0 1rem 0;
+            font-size: 0.88rem;
+        }
+        .sidebar-group {
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(9, 16, 30, 0.7);
+            border-radius: 12px;
+            padding: 0.85rem 0.9rem;
+            margin-bottom: 0.85rem;
+        }
+        .sidebar-title {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+        .sidebar-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.35rem 0;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            font-size: 0.88rem;
+        }
+        .sidebar-item:last-child {
+            border-bottom: none;
+        }
+        .sidebar-item span {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+        .section-card {
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(9, 16, 30, 0.75);
+            border-radius: 14px;
+            padding: 1rem;
+            box-shadow: 0 16px 32px rgba(2, 6, 23, 0.35);
+        }
+        .stepper {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin: 0.7rem 0 1rem 0;
+        }
+        .step {
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 12px;
+            padding: 0.75rem 0.8rem;
+            background: rgba(9, 16, 30, 0.6);
+            color: #cbd5e1;
             font-size: 0.9rem;
         }
-        .sidebar-card {
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            background: rgba(15, 23, 42, 0.62);
-            border-radius: 8px;
-            padding: 0.72rem 0.78rem;
-            margin: 0.48rem 0;
+        .step strong {
+            color: #67e8f9;
+            font-weight: 600;
         }
-        .sidebar-label {
-            color: #94a3b8;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0;
-            margin-bottom: 0.18rem;
+        .panel-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.45rem;
         }
-        .sidebar-value {
-            color: #f8fafc;
-            font-size: 0.98rem;
-            font-weight: 650;
+        .result-table {
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(9, 16, 30, 0.65);
+            border-radius: 12px;
+            padding: 0.6rem 0.8rem;
         }
-        .soft-panel {
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            background: rgba(15, 23, 42, 0.44);
-            border-radius: 8px;
+        .empty-state {
+            border: 1px dashed rgba(148, 163, 184, 0.22);
+            border-radius: 12px;
             padding: 1rem;
+            text-align: center;
+            color: #94a3b8;
+            background: rgba(9, 16, 30, 0.6);
         }
         div[data-testid="stMetric"] {
-            background: rgba(15, 23, 42, 0.58);
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            border-radius: 8px;
+            background: rgba(9, 16, 30, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 10px;
             padding: 0.75rem;
+        }
+        div[data-testid="stTabs"] button[aria-selected="true"] {
+            color: #67e8f9 !important;
+            border-bottom: 2px solid #22d3ee !important;
+        }
+        div[data-testid="stTabs"] button {
+            font-weight: 600;
         }
         </style>
         """,
@@ -157,19 +203,12 @@ def _inject_styles() -> None:
     )
 
 
-def _render_header(model_ready: bool, signs_count: int) -> None:
-    model_badge_class = "ready" if model_ready else "warn"
-    model_badge = "YOLO model ready" if model_ready else "YOLO model chưa tải"
+def _render_header() -> None:
     st.markdown(
         f"""
         <section class="app-hero">
             <h1>Hệ thống học tập nhận diện biển báo giao thông Việt Nam</h1>
-            <p>AI demo dùng YOLO để nhận diện biển báo, giải thích ý nghĩa, cảnh báo hành vi và hiển thị mức phạt tham khảo phục vụ học tập.</p>
-            <div class="status-row">
-                <span class="status-badge {model_badge_class}">{model_badge}</span>
-                <span class="status-badge ready">SQLite ready</span>
-                <span class="status-badge">{signs_count} biển báo</span>
-            </div>
+            <p>Tải ảnh hoặc video để AI nhận diện biển báo, giải thích ý nghĩa và hỗ trợ học tập.</p>
         </section>
         <div class="legal-note">{PENALTY_LEARNING_NOTE}</div>
         """,
@@ -177,35 +216,22 @@ def _render_header(model_ready: bool, signs_count: int) -> None:
     )
 
 
-def _sidebar_card(label: str, value: str) -> None:
-    st.markdown(
-        f"""
-        <div class="sidebar-card">
-            <div class="sidebar-label">{label}</div>
-            <div class="sidebar-value">{value}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
 def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> tuple[float, int, int, bool, bool, bool, str]:
     with st.sidebar:
-        st.header("Điều khiển demo")
-        _sidebar_card("Model", "YOLO11s Traffic Sign")
-        _sidebar_card("Trạng thái model", "Đã tải thành công" if model_ready else "Chưa tải")
-        _sidebar_card("Số class", f"{len(classes)} class" if classes else "Chưa đọc được classes.txt")
-        _sidebar_card("Số biển trong knowledge base", f"{len(signs_data)} biển" if signs_data else "Chưa đọc được signs.json")
-        _sidebar_card("Database", "SQLite ready")
-
-        st.divider()
-        st.subheader("Thiết lập nhận diện")
+        st.markdown(
+            f"""
+            <div class="sidebar-group">
+                <div class="sidebar-title">Trạng thái hệ thống</div>
+                <div class="sidebar-item">Model<span>{"Sẵn sàng" if model_ready else "Chưa tải"}</span></div>
+                <div class="sidebar-item">Dữ liệu<span>{len(signs_data)} biển báo</span></div>
+                <div class="sidebar-item">Database<span>SQLite ready</span></div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown("<div class='sidebar-group'><div class='sidebar-title'>Thiết lập nhận diện</div>", unsafe_allow_html=True)
         conf_threshold = st.slider("Ngưỡng tin cậy", 0.05, 0.95, 0.25, 0.05)
         img_size = st.selectbox("Image size / inference size", options=[416, 640, 960], index=1)
-        video_stride = st.number_input("Process every N frames", min_value=1, max_value=30, value=5)
-        save_history = st.toggle("Lưu lịch sử nhận diện", value=True)
-        enable_speech = st.toggle("Đọc cảnh báo bằng giọng nói", value=True)
-        show_performance = st.toggle("Hiển thị FPS / inference time", value=True)
         if st.session_state.get("selected_vehicle_type") not in VEHICLE_OPTIONS:
             st.session_state.selected_vehicle_type = "car"
         selected_vehicle_type = st.selectbox(
@@ -214,6 +240,11 @@ def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> 
             format_func=lambda key: VEHICLE_OPTIONS[key],
             key="selected_vehicle_type",
         )
+        video_stride = st.number_input("Process every N frames", min_value=1, max_value=30, value=5)
+        save_history = st.toggle("Lưu lịch sử nhận diện", value=True)
+        enable_speech = st.toggle("Đọc cảnh báo bằng giọng nói", value=True)
+        show_performance = st.toggle("Hiển thị FPS / inference time", value=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     return (
         conf_threshold,
@@ -256,7 +287,7 @@ def main() -> None:
 
     model_path = str(MODEL_PATH)
     model = _load_model_or_show_warning(model_path)
-    _render_header(model is not None, len(signs_data))
+    _render_header()
     (
         conf_threshold,
         img_size,
@@ -271,16 +302,16 @@ def main() -> None:
         model is not None,
     )
 
-    tab_image, tab_video, tab_lookup, tab_chat, tab_quiz, tab_history, tab_eval, tab_webcam = st.tabs(
+    tab_image, tab_video, tab_webcam, tab_lookup, tab_chat, tab_quiz, tab_history, tab_eval = st.tabs(
         [
-            "Nhận diện ảnh",
-            "Nhận diện video",
-            "Tra cứu biển báo",
-            "Chatbot hỏi đáp",
-            "Quiz / Tình huống",
-            "Lịch sử / thống kê",
+            "Ảnh",
+            "Video",
+            "Webcam",
+            "Tra cứu",
+            "Chatbot",
+            "Quiz",
+            "Lịch sử",
             "Đánh giá model",
-            "Webcam realtime",
         ]
     )
 
@@ -307,16 +338,6 @@ def main() -> None:
             video_stride,
             selected_vehicle_type,
         )
-    with tab_lookup:
-        render_lookup_tab(signs_data, enable_speech, selected_vehicle_type)
-    with tab_chat:
-        render_chat_tab(signs_data, selected_vehicle_type)
-    with tab_quiz:
-        render_quiz_tab(signs_data, scenarios)
-    with tab_history:
-        render_history_tab()
-    with tab_eval:
-        render_model_evaluation_tab(model, classes)
     with tab_webcam:
         render_webcam_tab(
             model,
@@ -329,3 +350,13 @@ def main() -> None:
             video_stride,
             selected_vehicle_type,
         )
+    with tab_lookup:
+        render_lookup_tab(signs_data, enable_speech, selected_vehicle_type)
+    with tab_chat:
+        render_chat_tab(signs_data, selected_vehicle_type)
+    with tab_quiz:
+        render_quiz_tab(signs_data, scenarios)
+    with tab_history:
+        render_history_tab()
+    with tab_eval:
+        render_model_evaluation_tab(model, classes)

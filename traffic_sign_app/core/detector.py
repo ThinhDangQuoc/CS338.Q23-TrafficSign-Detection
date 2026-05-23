@@ -1,7 +1,7 @@
 """YOLO detection helpers for images and video frames."""
 
 from __future__ import annotations
-
+from PIL import Image, ImageDraw, ImageFont
 import os
 from functools import lru_cache
 from pathlib import Path
@@ -90,38 +90,79 @@ def detect_image(
 
     return detections
 
+def _load_vietnamese_font(size: int = 18):
+    """Load a Unicode font that supports Vietnamese."""
+    font_candidates = [
+        "assets/fonts/DejaVuSans.ttf",
+        "assets/fonts/NotoSans-Regular.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
+        "C:/Windows/Fonts/arial.ttf",
+    ]
 
+    for font_path in font_candidates:
+        if Path(font_path).exists():
+            return ImageFont.truetype(font_path, size=size)
+
+    return ImageFont.load_default()
 def draw_detections(image, detections: list[dict[str, Any]], signs_data: dict | None = None):
-    """Draw bounding boxes and labels on an image."""
+    """Draw bounding boxes and Vietnamese labels on an image."""
     if image is None:
         return image
 
     annotated = np.asarray(image).copy()
     height, width = annotated.shape[:2]
 
+    # Draw boxes by OpenCV first
+    def _shorten_label(text: str, max_len: int = 32) -> str:
+        if len(text) <= max_len:
+            return text
+        return text[: max_len - 3].rstrip() + "..."
+
     for detection in detections or []:
         x1, y1, x2, y2 = detection.get("box", [0, 0, 0, 0])
         x1, x2 = max(0, x1), min(width - 1, x2)
         y1, y2 = max(0, y1), min(height - 1, y2)
+
+        cv2.rectangle(annotated, (x1, y1), (x2, y2), (20, 160, 90), 2)
+
+    # Draw Vietnamese text by Pillow
+    pil_img = Image.fromarray(annotated)
+    draw = ImageDraw.Draw(pil_img)
+    font = _load_vietnamese_font(size=18)
+
+    for detection in detections or []:
+        x1, y1, x2, y2 = detection.get("box", [0, 0, 0, 0])
+        x1, x2 = max(0, x1), min(width - 1, x2)
+        y1, y2 = max(0, y1), min(height - 1, y2)
+
         class_id = detection.get("class_id")
         sign_info = (signs_data or {}).get(str(class_id), {})
         label_name = sign_info.get("short_name") or detection.get("class_name", f"Class {class_id}")
         confidence = float(detection.get("confidence", 0.0))
-        label = f"{class_id}: {label_name} {confidence:.2f}"
+        clean_name = _shorten_label(str(label_name), max_len=36)
+        label = f"{clean_name} · {confidence:.2f}"
 
-        cv2.rectangle(annotated, (x1, y1), (x2, y2), (20, 160, 90), 2)
-        (text_w, text_h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 2)
-        label_y = max(0, y1 - text_h - 8)
-        cv2.rectangle(annotated, (x1, label_y), (min(width - 1, x1 + text_w + 8), y1), (20, 160, 90), -1)
-        cv2.putText(
-            annotated,
-            label,
-            (x1 + 4, max(text_h + 2, y1 - 5)),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.55,
-            (255, 255, 255),
-            2,
-            cv2.LINE_AA,
+        bbox = draw.textbbox((0, 0), label, font=font)
+        text_w = bbox[2] - bbox[0]
+        text_h = bbox[3] - bbox[1]
+
+        label_x = x1
+        label_y = max(0, y1 - text_h - 10)
+
+        bg_x2 = min(width - 1, label_x + text_w + 10)
+        bg_y2 = min(height - 1, label_y + text_h + 8)
+
+        draw.rectangle(
+            [(label_x, label_y), (bg_x2, bg_y2)],
+            fill=(20, 160, 90),
         )
 
-    return annotated
+        draw.text(
+            (label_x + 5, label_y + 3),
+            label,
+            font=font,
+            fill=(255, 255, 255),
+        )
+
+    return np.asarray(pil_img)
