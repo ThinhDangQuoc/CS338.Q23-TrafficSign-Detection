@@ -253,36 +253,108 @@ def _inject_styles() -> None:
             padding: 0.75rem;
             background: rgba(8, 15, 28, 0.6);
         }
-        div[data-testid="stSegmentedControl"] {
-            margin-bottom: 0.6rem;
+
+        /* ═══ STREAMLIT ELEMENT CONTAINER MARKER SELECTORS ═══ */
+
+        /* ── Main Navigation (st.segmented_control with key="main_section") ── */
+        [data-testid="stElementContainer"]:has(#main-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] [role="radiogroup"] {
+            gap: 1.25rem !important;
+            justify-content: center !important;
+            display: flex !important;
         }
-        div[data-testid="stSegmentedControl"] [role="radiogroup"] {
-            gap: 0.5rem;
+        [data-testid="stElementContainer"]:has(#main-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button {
+            padding: 1.8rem 4.5rem !important;
+            font-size: 2.2rem !important;
+            font-weight: 800 !important;
+            min-height: 90px !important;
+            border-radius: 999px !important;
+            letter-spacing: 0.02em !important;
+            border: 2.5px solid rgba(148, 163, 184, 0.28) !important;
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            color: #cbd5e1 !important;
+            transition: all 0.2s ease-in-out !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
-        div[data-testid="stSegmentedControl"] label {
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            background: rgba(15, 23, 42, 0.55);
-            padding: 0.45rem 1.05rem;
-            border-radius: 999px;
-            font-weight: 600;
-            color: #cbd5e1;
-            min-height: 40px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+        [data-testid="stElementContainer"]:has(#main-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button:hover {
+            border-color: rgba(34, 211, 238, 0.7) !important;
+            color: #ffffff !important;
+            background-color: rgba(34, 211, 238, 0.1) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 24px rgba(34, 211, 238, 0.15) !important;
         }
-        div[data-testid="stSegmentedControl"] label:has(input:checked) {
-            border: 1px solid rgba(34, 211, 238, 0.75);
-            background: rgba(34, 211, 238, 0.14);
-            color: #e6fbff;
-            box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25);
+        [data-testid="stElementContainer"]:has(#main-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button[aria-checked="true"],
+        [data-testid="stElementContainer"]:has(#main-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button[data-selected="true"],
+        [data-testid="stElementContainer"]:has(#main-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button.e8vg11g13 {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.25), rgba(99, 102, 241, 0.22)) !important;
+            border: 2.5px solid rgba(34, 211, 238, 0.95) !important;
+            color: #ffffff !important;
+            box-shadow:
+                0 0 0 3px rgba(34, 211, 238, 0.3),
+                0 10px 35px rgba(34, 211, 238, 0.3),
+                inset 0 1px 0 rgba(255,255,255,0.15) !important;
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.8) !important;
+            transform: translateY(-2px) !important;
         }
-        div[data-testid="stSegmentedControl"] label:hover {
-            border-color: rgba(34, 211, 238, 0.5);
-            color: #e6fbff;
+
+        /* ── Sub Navigation (key="detect_tab", "learn_tab", "track_tab") ── */
+        [data-testid="stElementContainer"]:has(#detect-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] [role="radiogroup"],
+        [data-testid="stElementContainer"]:has(#learn-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] [role="radiogroup"],
+        [data-testid="stElementContainer"]:has(#track-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] [role="radiogroup"] {
+            gap: 0.8rem !important;
+            justify-content: center !important;
+            display: flex !important;
+        }
+        [data-testid="stElementContainer"]:has(#detect-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button,
+        [data-testid="stElementContainer"]:has(#learn-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button,
+        [data-testid="stElementContainer"]:has(#track-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button {
+            border: 1.5px solid rgba(148, 163, 184, 0.25) !important;
+            background-color: rgba(15, 23, 42, 0.65) !important;
+            padding: 0.8rem 1.8rem !important;
+            border-radius: 999px !important;
+            font-weight: 700 !important;
+            font-size: 1.15rem !important;
+            color: #94a3b8 !important;
+            min-height: 52px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            letter-spacing: 0.01em !important;
+            transition: all 0.18s ease !important;
+            cursor: pointer !important;
+        }
+        [data-testid="stElementContainer"]:has(#detect-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button:hover,
+        [data-testid="stElementContainer"]:has(#learn-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button:hover,
+        [data-testid="stElementContainer"]:has(#track-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button:hover {
+            border-color: rgba(34, 211, 238, 0.6) !important;
+            color: #e2e8f0 !important;
+            background-color: rgba(34, 211, 238, 0.08) !important;
+        }
+        [data-testid="stElementContainer"]:has(#detect-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button[aria-checked="true"],
+        [data-testid="stElementContainer"]:has(#detect-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button[data-selected="true"],
+        [data-testid="stElementContainer"]:has(#detect-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button.e8vg11g13,
+        [data-testid="stElementContainer"]:has(#learn-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button[aria-checked="true"],
+        [data-testid="stElementContainer"]:has(#learn-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button[data-selected="true"],
+        [data-testid="stElementContainer"]:has(#learn-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button.e8vg11g13,
+        [data-testid="stElementContainer"]:has(#track-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button[aria-checked="true"],
+        [data-testid="stElementContainer"]:has(#track-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button[data-selected="true"],
+        [data-testid="stElementContainer"]:has(#track-tabs-marker) + [data-testid="stElementContainer"] [data-testid="stSegmentedControl"] button.e8vg11g13 {
+            border: 1.5px solid rgba(34, 211, 238, 0.85) !important;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.16), rgba(99, 102, 241, 0.13)) !important;
+            color: #e6fbff !important;
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.28), 0 4px 20px rgba(34, 211, 238, 0.18) !important;
+        }
+
+        /* Divider between main nav and sub-nav */
+        .sub-nav-wrapper {
+            margin-top: 0.6rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.12);
         }
         .nav-block {
-            margin: 0.2rem 0 0.8rem 0;
+            margin: 0.2rem 0 0rem 0;
         }
         .stButton > button {
             border-radius: 10px;
@@ -399,24 +471,29 @@ def main() -> None:
         model is not None,
     )
 
+    # ── Main navigation ─────────────────────────────────────────────────────
     st.markdown("<div class='nav-block'></div>", unsafe_allow_html=True)
+    st.markdown("<div id='main-tabs-marker'></div>", unsafe_allow_html=True)
     main_section = st.segmented_control(
         "Nhóm chức năng",
-        ["Nhận diện", "Học biển báo", "Theo dõi"],
-        default=st.session_state.get("main_section", "Nhận diện"),
+        ["🚦 Nhận diện", "📖 Học & Luyện tập", "📊 Theo dõi"],
+        default=st.session_state.get("main_section", "🚦 Nhận diện"),
         key="main_section",
         label_visibility="collapsed",
     )
 
-    if main_section == "Nhận diện":
+    # ── Sub-navigation & content ─────────────────────────────────────────────
+    if main_section == "🚦 Nhận diện":
+        st.markdown("<div class='sub-nav-wrapper'></div>", unsafe_allow_html=True)
+        st.markdown("<div id='detect-tabs-marker'></div>", unsafe_allow_html=True)
         sub_tab = st.segmented_control(
             "Chọn chế độ nhận diện",
-            ["Ảnh", "Video", "Webcam"],
-            default=st.session_state.get("detect_tab", "Ảnh"),
+            ["🖼️ Tải ảnh", "🎬 Video", "🎥 Realtime"],
+            default=st.session_state.get("detect_tab", "🖼️ Tải ảnh"),
             key="detect_tab",
             label_visibility="collapsed",
         )
-        if sub_tab == "Ảnh":
+        if sub_tab == "🖼️ Tải ảnh":
             render_image_tab(
                 model,
                 signs_data,
@@ -427,7 +504,7 @@ def main() -> None:
                 show_performance,
                 selected_vehicle_type,
             )
-        elif sub_tab == "Video":
+        elif sub_tab == "🎬 Video":
             render_video_tab(
                 model,
                 signs_data,
@@ -451,29 +528,33 @@ def main() -> None:
                 video_stride,
                 selected_vehicle_type,
             )
-    elif main_section == "Học biển báo":
+    elif main_section == "📖 Học & Luyện tập":
+        st.markdown("<div class='sub-nav-wrapper'></div>", unsafe_allow_html=True)
+        st.markdown("<div id='learn-tabs-marker'></div>", unsafe_allow_html=True)
         sub_tab = st.segmented_control(
             "Chọn chế độ học",
-            ["Tra cứu", "Hỏi AI", "Luyện quiz"],
-            default=st.session_state.get("learn_tab", "Tra cứu"),
+            ["🔍 Tra cứu", "🤖 Hỏi AI", "🧠 Quiz"],
+            default=st.session_state.get("learn_tab", "🔍 Tra cứu"),
             key="learn_tab",
             label_visibility="collapsed",
         )
-        if sub_tab == "Tra cứu":
+        if sub_tab == "🔍 Tra cứu":
             render_lookup_tab(signs_data, enable_speech, selected_vehicle_type)
-        elif sub_tab == "Hỏi AI":
+        elif sub_tab == "🤖 Hỏi AI":
             render_chat_tab(signs_data, selected_vehicle_type)
         else:
             render_quiz_tab(signs_data, scenarios)
     else:
+        st.markdown("<div class='sub-nav-wrapper'></div>", unsafe_allow_html=True)
+        st.markdown("<div id='track-tabs-marker'></div>", unsafe_allow_html=True)
         sub_tab = st.segmented_control(
             "Chọn mục theo dõi",
-            ["Lịch sử", "Đánh giá model"],
-            default=st.session_state.get("track_tab", "Lịch sử"),
+            ["📋 Lịch sử", "🔬 Đánh giá model"],
+            default=st.session_state.get("track_tab", "📋 Lịch sử"),
             key="track_tab",
             label_visibility="collapsed",
         )
-        if sub_tab == "Lịch sử":
+        if sub_tab == "📋 Lịch sử":
             render_history_tab()
         else:
             render_model_evaluation_tab(model, classes)
