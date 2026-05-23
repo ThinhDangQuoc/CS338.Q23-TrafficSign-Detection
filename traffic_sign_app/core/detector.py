@@ -165,4 +165,4 @@ def draw_detections(image, detections: list[dict[str, Any]], signs_data: dict | 
             fill=(255, 255, 255),
         )
 
-    return np.asarray(pil_img)
+    return np.array(pil_img)

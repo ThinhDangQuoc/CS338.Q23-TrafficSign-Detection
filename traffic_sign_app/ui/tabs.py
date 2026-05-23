@@ -5,6 +5,7 @@ from __future__ import annotations
 import threading
 import time
 import tempfile
+import base64
 from pathlib import Path
 from typing import Any
 
@@ -581,7 +582,7 @@ def render_webcam_tab(
 
         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
             frame_bgr = frame.to_ndarray(format="bgr24")
-            annotated = frame_bgr
+            annotated = frame_bgr.copy()
             should_process = self.frame_index % max(int(video_stride), 1) == 0
 
             if should_process:
@@ -615,8 +616,11 @@ def render_webcam_tab(
                         self.last_inference_time = elapsed
                         self.latest_detections = detections
                         self.latest_signs = sign_infos
-                except Exception:
-                    annotated = frame_bgr
+                except Exception as e:
+                    import traceback
+                    with open("webcam_error.log", "a") as f:
+                        f.write(f"Error in WebRTC recv:\n{traceback.format_exc()}\n")
+                    annotated = frame_bgr.copy()
             else:
                 with self.lock:
                     if self.latest_detections:
@@ -694,159 +698,189 @@ def render_webcam_tab(
 
     # ── Right info panel ────────────────────────────────────────────────────
     with info_col:
-        if not ctx.state.playing:
-            st.markdown(
-                "<div style='padding:2.5rem 1rem;text-align:center;opacity:.45;font-size:2rem;'>📷</div>"
-                "<div style='text-align:center;opacity:.45;'>Chưa có tín hiệu camera</div>",
-                unsafe_allow_html=True,
-            )
-        else:
-            processor = ctx.video_processor
-            if not processor:
-                st.info("Đang khởi tạo camera...")
+        @st.fragment(run_every='1.5s')
+        def _render_info_panel():
+            if not ctx.state.playing:
+                st.markdown(
+                    "<div style='padding:2.5rem 1rem;text-align:center;opacity:.45;font-size:2rem;'>📷</div>"
+                    "<div style='text-align:center;opacity:.45;'>Chưa có tín hiệu camera</div>",
+                    unsafe_allow_html=True,
+                )
             else:
-                stats = processor.get_stats()
-                latest_signs: list[dict] = stats.get("latest_signs") or []
-                latest_detections: list[dict] = stats.get("latest_detections") or []
-
-                # ── Sign info card ─────────────────────────────────────
-                st.markdown("#### 🚦 Biển báo gần nhất")
-                if latest_signs:
-                    top_sign = latest_signs[0]
-                    top_det = latest_detections[0] if latest_detections else {}
-                    conf = float(top_det.get("confidence", 0.0))
-                    st.session_state.last_sign_info = top_sign
-
-                    # Update in-tab track history (dedupe by class_id)
-                    history: list[dict] = st.session_state.webcam_track_history
-                    if not history or history[-1].get("class_id") != top_sign.get("class_id"):
-                        history.append({
-                            "class_id": top_sign.get("class_id"),
-                            "name": top_sign.get("short_name") or top_sign.get("class_name", "?"),
-                            "conf": conf,
-                            "time": time.strftime("%H:%M:%S"),
-                        })
-                        st.session_state.webcam_track_history = history[-10:]
-
-                    with st.container(border=True):
-                        st.markdown(
-                            f"**{top_sign.get('short_name') or top_sign.get('class_name', 'Biển báo')}**"
-                            f"&nbsp;&nbsp;`{conf:.2f}`"
-                        )
-                        meaning = top_sign.get('meaning', '—')
-                        st.caption(meaning if len(meaning) <= 120 else meaning[:117] + "...")
-                        st.markdown(f"🚗 **Hành động:** {top_sign.get('driver_action', '—')}")
-                        st.markdown(f"⚠️ **Cảnh báo:** {top_sign.get('warning', '—')}")
-
-                    # Auto TTS
-                    if tts_on:
-                        if should_speak(top_sign.get("class_id"), cooldown_seconds=8):
-                            audio_path = text_to_speech(generate_speech_text(top_sign), AUDIO_DIR)
-                            if audio_path:
-                                st.audio(audio_path, autoplay=True)
-
-                    if st.button("🔊 Đọc ngay", key="webcam_speak_btn"):
-                        audio_path = text_to_speech(generate_speech_text(top_sign), AUDIO_DIR)
-                        if audio_path:
-                            st.audio(audio_path, autoplay=True)
-                        else:
-                            st.warning("Không tạo được audio TTS.")
-
+                processor = ctx.video_processor
+                if not processor:
+                    st.info("Đang khởi tạo camera...")
                 else:
-                    st.markdown(
-                        "<div style='padding:1rem;text-align:center;opacity:.5;'>Chưa phát hiện biển báo...</div>",
-                        unsafe_allow_html=True,
-                    )
+                    stats = processor.get_stats()
+                    latest_signs: list[dict] = stats.get("latest_signs") or []
+                    latest_detections: list[dict] = stats.get("latest_detections") or []
 
-                st.divider()
+                    # ── Sign info cards ─────────────────────────────────────
+                    st.markdown("#### 🚦 Danh sách phát hiện (3 biển gần nhất)")
+                    if latest_signs:
+                        top_sign = latest_signs[0]
+                        top_det = latest_detections[0] if latest_detections else {}
+                        conf = float(top_det.get("confidence", 0.0))
+                        st.session_state.last_sign_info = top_sign
 
-                # ── Track history ──────────────────────────────────────
-                with st.expander("📋 Lịch sử nhận diện", expanded=True):
+                        # Update in-tab track history (dedupe by class_id)
+                        history: list[dict] = st.session_state.webcam_track_history
+                        if not history or history[-1].get("class_id") != top_sign.get("class_id"):
+                            history.append({
+                                "class_id": top_sign.get("class_id"),
+                                "name": top_sign.get("short_name") or top_sign.get("class_name", "?"),
+                                "conf": conf,
+                                "time": time.strftime("%H:%M:%S"),
+                                "sign_info": top_sign,
+                            })
+                            st.session_state.webcam_track_history = history[-10:]
+                    
                     history = st.session_state.webcam_track_history
                     if history:
-                        rows = [
-                            {"Giờ": h["time"], "Biển báo": h["name"], "Conf": f"{h['conf']:.2f}"}
-                            for h in reversed(history)
-                        ]
-                        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-                        if st.button("🗑️ Xóa lịch sử", key="webcam_clear_track"):
-                            st.session_state.webcam_track_history = []
-                            st.rerun()
-                    else:
-                        st.caption("Chưa có dữ liệu track.")
+                        # Display up to 3 most recent signs
+                        for item in reversed(history[-3:]):
+                            info = item.get("sign_info", {})
+                            with st.container(border=True):
+                                st.markdown(
+                                    f"**{info.get('short_name') or info.get('class_name', 'Biển báo')}**"
+                                    f"&nbsp;&nbsp;`{item['conf']:.2f}` &nbsp;&nbsp; *(Lúc {item['time']})*"
+                                )
+                                meaning = info.get('meaning', '—')
+                                st.caption(meaning if len(meaning) <= 120 else meaning[:117] + "...")
+                                st.markdown(f"🚗 **Hành động:** {info.get('driver_action', '—')}")
+                                st.markdown(f"⚠️ **Cảnh báo:** {info.get('warning', '—')}")
+                        
+                        # Handle TTS Logic with Persistent Playback
+                        if tts_on:
+                            latest_item = history[-1]
+                            latest_id = latest_item["class_id"]
+                            # Only trigger if it's a NEW sign ID
+                            if latest_id != st.session_state.get("webcam_last_tts_id"):
+                                audio_path = text_to_speech(generate_speech_text(latest_item.get("sign_info", {})), AUDIO_DIR)
+                                if audio_path:
+                                    st.session_state.webcam_last_tts_id = latest_id
+                                    with open(audio_path, "rb") as f:
+                                        b64 = base64.b64encode(f.read()).decode("utf-8")
+                                    st.session_state.webcam_tts_b64 = b64
 
-                st.divider()
-
-                # ── Inline Quiz Generator ──────────────────────────────
-                st.markdown("#### 🧠 Quiz nhanh")
-                current_sign = st.session_state.get("last_sign_info")
-                if current_sign:
-                    if st.button("⚡ Tạo câu hỏi", key="webcam_gen_quiz", type="primary"):
-                        st.session_state.webcam_quiz_checked = False
-                        st.session_state.webcam_quiz = None
-                        import random
-                        sign_name = current_sign.get("short_name") or current_sign.get("class_name", "biển báo")
-                        meaning = current_sign.get("meaning", "Cảnh báo nguy hiểm")
-                        action = current_sign.get("driver_action", "Tuân thủ quy định giao thông")
-                        violation = current_sign.get("common_violation", "Không tuân thủ biển báo")
-                        distractors_action = [
-                            "Tăng tốc để vượt qua nhanh",
-                            "Dừng xe hoàn toàn và chờ",
-                            "Nhường đường cho xe ngược chiều",
-                            "Bật đèn hazard và dừng lại",
-                        ]
-                        distractors_meaning = [
-                            "Cho phép đi nhanh hơn tốc độ bình thường",
-                            "Đường ưu tiên, không cần nhường",
-                            "Khu vực không giới hạn tốc độ",
-                            "Cấm tất cả phương tiện",
-                        ]
-                        templates = [
-                            {
-                                "question": f"Khi gặp **{sign_name}**, tài xế cần làm gì?",
-                                "answer": action,
-                                "options": _generate_quiz_options(action, distractors_action),
-                                "explanation": f"Biển **{sign_name}**: {meaning}. Hành động đúng: {action}",
-                            },
-                            {
-                                "question": f"**{sign_name}** có ý nghĩa gì?",
-                                "answer": meaning,
-                                "options": _generate_quiz_options(meaning, distractors_meaning),
-                                "explanation": f"Ý nghĩa: {meaning}. {action}",
-                            },
-                            {
-                                "question": f"Lỗi vi phạm thường gặp khi không chấp hành **{sign_name}** là?",
-                                "answer": violation,
-                                "options": _generate_quiz_options(violation, [
-                                    "Vượt đèn đỏ", "Đi sai làn đường",
-                                    "Không đội mũ bảo hiểm", "Dừng xe sai nơi quy định",
-                                ]),
-                                "explanation": f"Lỗi vi phạm phổ biến: {violation}. {action}",
-                            },
-                        ]
-                        st.session_state.webcam_quiz = random.choice(templates)
-
-                    quiz = st.session_state.get("webcam_quiz")
-                    if quiz:
-                        with st.container(border=True):
-                            st.markdown(quiz["question"])
-                            choice = st.radio(
-                                "Đáp án:",
-                                quiz["options"],
-                                key="webcam_quiz_radio",
-                                index=None,
+                        # Inject Javascript to play audio persistently on parent window
+                        if st.session_state.get("webcam_tts_b64"):
+                            b64 = st.session_state.webcam_tts_b64
+                            st.components.v1.html(
+                                f"""
+                                <script>
+                                    if (window.parent.window.currentTTS !== "{b64}") {{
+                                        window.parent.window.currentTTS = "{b64}";
+                                        let audio = window.parent.document.getElementById("persistent-tts");
+                                        if (!audio) {{
+                                            audio = window.parent.document.createElement("audio");
+                                            audio.id = "persistent-tts";
+                                            window.parent.document.body.appendChild(audio);
+                                        }}
+                                        audio.src = "data:audio/mp3;base64,{b64}";
+                                        audio.play().catch(e => console.error("Auto-play prevented", e));
+                                    }}
+                                </script>
+                                """,
+                                height=0,
                             )
-                            if st.button("✅ Kiểm tra", key="webcam_check_quiz"):
-                                st.session_state.webcam_quiz_checked = True
-                            if st.session_state.webcam_quiz_checked and choice:
-                                correct = quiz["answer"]
-                                if choice.strip() == correct.strip() or correct.strip() in choice:
-                                    st.success("🎉 Đúng rồi!")
-                                else:
-                                    st.error(f"❌ Chưa đúng. Đáp án: {correct}")
-                                st.info(f"💡 {quiz['explanation']}")
-                else:
-                    st.caption("Bật webcam và để AI phát hiện biển báo để tạo quiz.")
+                    else:
+                        st.markdown(
+                            "<div style='padding:1rem;text-align:center;opacity:.5;'>Chưa phát hiện biển báo...</div>",
+                            unsafe_allow_html=True,
+                        )
+
+                    st.divider()
+
+                    # ── Track history ──────────────────────────────────────
+                    with st.expander("📋 Lịch sử nhận diện", expanded=True):
+                        history = st.session_state.webcam_track_history
+                        if history:
+                            rows = [
+                                {"Giờ": h["time"], "Biển báo": h["name"], "Conf": f"{h['conf']:.2f}"}
+                                for h in reversed(history)
+                            ]
+                            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+                            if st.button("🗑️ Xóa lịch sử", key="webcam_clear_track"):
+                                st.session_state.webcam_track_history = []
+                                st.rerun()
+                        else:
+                            st.caption("Chưa có dữ liệu track.")
+
+                    st.divider()
+
+                    # ── Inline Quiz Generator ──────────────────────────────
+                    st.markdown("#### 🧠 Quiz nhanh")
+                    current_sign = st.session_state.get("last_sign_info")
+                    if current_sign:
+                        if st.button("⚡ Tạo câu hỏi", key="webcam_gen_quiz", type="primary"):
+                            st.session_state.webcam_quiz_checked = False
+                            st.session_state.webcam_quiz = None
+                            import random
+                            sign_name = current_sign.get("short_name") or current_sign.get("class_name", "biển báo")
+                            meaning = current_sign.get("meaning", "Cảnh báo nguy hiểm")
+                            action = current_sign.get("driver_action", "Tuân thủ quy định giao thông")
+                            violation = current_sign.get("common_violation", "Không tuân thủ biển báo")
+                            distractors_action = [
+                                "Tăng tốc để vượt qua nhanh",
+                                "Dừng xe hoàn toàn và chờ",
+                                "Nhường đường cho xe ngược chiều",
+                                "Bật đèn hazard và dừng lại",
+                            ]
+                            distractors_meaning = [
+                                "Cho phép đi nhanh hơn tốc độ bình thường",
+                                "Đường ưu tiên, không cần nhường",
+                                "Khu vực không giới hạn tốc độ",
+                                "Cấm tất cả phương tiện",
+                            ]
+                            templates = [
+                                {
+                                    "question": f"Khi gặp **{sign_name}**, tài xế cần làm gì?",
+                                    "answer": action,
+                                    "options": _generate_quiz_options(action, distractors_action),
+                                    "explanation": f"Biển **{sign_name}**: {meaning}. Hành động đúng: {action}",
+                                },
+                                {
+                                    "question": f"**{sign_name}** có ý nghĩa gì?",
+                                    "answer": meaning,
+                                    "options": _generate_quiz_options(meaning, distractors_meaning),
+                                    "explanation": f"Ý nghĩa: {meaning}. {action}",
+                                },
+                                {
+                                    "question": f"Lỗi vi phạm thường gặp khi không chấp hành **{sign_name}** là?",
+                                    "answer": violation,
+                                    "options": _generate_quiz_options(violation, [
+                                        "Vượt đèn đỏ", "Đi sai làn đường",
+                                        "Không đội mũ bảo hiểm", "Dừng xe sai nơi quy định",
+                                    ]),
+                                    "explanation": f"Lỗi vi phạm phổ biến: {violation}. {action}",
+                                },
+                            ]
+                            st.session_state.webcam_quiz = random.choice(templates)
+
+                        quiz = st.session_state.get("webcam_quiz")
+                        if quiz:
+                            with st.container(border=True):
+                                st.markdown(quiz["question"])
+                                choice = st.radio(
+                                    "Đáp án:",
+                                    quiz["options"],
+                                    key="webcam_quiz_radio",
+                                    index=None,
+                                )
+                                if st.button("✅ Kiểm tra", key="webcam_check_quiz"):
+                                    st.session_state.webcam_quiz_checked = True
+                                if st.session_state.webcam_quiz_checked and choice:
+                                    correct = quiz["answer"]
+                                    if choice.strip() == correct.strip() or correct.strip() in choice:
+                                        st.success("🎉 Đúng rồi!")
+                                    else:
+                                        st.error(f"❌ Chưa đúng. Đáp án: {correct}")
+                                    st.info(f"💡 {quiz['explanation']}")
+                    else:
+                        st.caption("Bật webcam và để AI phát hiện biển báo để tạo quiz.")
+
+        _render_info_panel()
 
 
 def render_lookup_tab(signs_data: dict, enable_speech: bool, selected_vehicle_type: str) -> None:
