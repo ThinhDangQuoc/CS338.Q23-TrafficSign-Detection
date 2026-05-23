@@ -598,7 +598,7 @@ def render_webcam_tab(
                         for detection, sign_info in zip(detections, sign_infos):
                             class_id = int(detection.get("class_id", -1))
                             last_saved = self.history_cooldown.get(class_id, 0)
-                            if now - last_saved >= 8:
+                            if now - last_saved >= 3:
                                 save_detection(
                                     class_id,
                                     sign_info.get("class_name", detection.get("class_name", "Unknown")),
@@ -687,14 +687,6 @@ def render_webcam_tab(
         )
         if not ctx.state.playing:
             st.info("Bấm **START** để bật webcam. Trình duyệt sẽ hỏi quyền truy cập camera.")
-        elif show_performance:
-            processor = ctx.video_processor
-            if processor:
-                s = processor.get_stats()
-                m1, m2, m3 = st.columns(3)
-                m1.metric("FPS TB", f"{s['avg_fps']:.1f}")
-                m2.metric("Frames", s["processed_frames"])
-                m3.metric("Detections", s["total_detections"])
 
     # ── Right info panel ────────────────────────────────────────────────────
     with info_col:
@@ -723,9 +715,13 @@ def render_webcam_tab(
                         conf = float(top_det.get("confidence", 0.0))
                         st.session_state.last_sign_info = top_sign
 
-                        # Update in-tab track history (dedupe by class_id)
+                        # Update in-tab track history (dedupe by class_id or time > 3s)
                         history: list[dict] = st.session_state.webcam_track_history
-                        if not history or history[-1].get("class_id") != top_sign.get("class_id"):
+                        now_ts = time.time()
+                        last_ts = st.session_state.get("webcam_last_append_ts", 0)
+                        
+                        if not history or history[-1].get("class_id") != top_sign.get("class_id") or (now_ts - last_ts > 3):
+                            st.session_state.webcam_last_append_ts = now_ts
                             history.append({
                                 "class_id": top_sign.get("class_id"),
                                 "name": top_sign.get("short_name") or top_sign.get("class_name", "?"),
@@ -811,52 +807,70 @@ def render_webcam_tab(
 
                     # ── Inline Quiz Generator ──────────────────────────────
                     st.markdown("#### 🧠 Quiz nhanh")
+                    mode_options = ["📋 Câu hỏi tĩnh", "🤖 AI tạo câu hỏi"]
+                    selected_mode = st.radio(
+                        "Chế độ:",
+                        mode_options,
+                        horizontal=True,
+                        key="webcam_quiz_mode_radio"
+                    )
+                    
                     current_sign = st.session_state.get("last_sign_info")
                     if current_sign:
                         if st.button("⚡ Tạo câu hỏi", key="webcam_gen_quiz", type="primary"):
                             st.session_state.webcam_quiz_checked = False
                             st.session_state.webcam_quiz = None
-                            import random
-                            sign_name = current_sign.get("short_name") or current_sign.get("class_name", "biển báo")
-                            meaning = current_sign.get("meaning", "Cảnh báo nguy hiểm")
-                            action = current_sign.get("driver_action", "Tuân thủ quy định giao thông")
-                            violation = current_sign.get("common_violation", "Không tuân thủ biển báo")
-                            distractors_action = [
-                                "Tăng tốc để vượt qua nhanh",
-                                "Dừng xe hoàn toàn và chờ",
-                                "Nhường đường cho xe ngược chiều",
-                                "Bật đèn hazard và dừng lại",
-                            ]
-                            distractors_meaning = [
-                                "Cho phép đi nhanh hơn tốc độ bình thường",
-                                "Đường ưu tiên, không cần nhường",
-                                "Khu vực không giới hạn tốc độ",
-                                "Cấm tất cả phương tiện",
-                            ]
-                            templates = [
-                                {
-                                    "question": f"Khi gặp **{sign_name}**, tài xế cần làm gì?",
-                                    "answer": action,
-                                    "options": _generate_quiz_options(action, distractors_action),
-                                    "explanation": f"Biển **{sign_name}**: {meaning}. Hành động đúng: {action}",
-                                },
-                                {
-                                    "question": f"**{sign_name}** có ý nghĩa gì?",
-                                    "answer": meaning,
-                                    "options": _generate_quiz_options(meaning, distractors_meaning),
-                                    "explanation": f"Ý nghĩa: {meaning}. {action}",
-                                },
-                                {
-                                    "question": f"Lỗi vi phạm thường gặp khi không chấp hành **{sign_name}** là?",
-                                    "answer": violation,
-                                    "options": _generate_quiz_options(violation, [
-                                        "Vượt đèn đỏ", "Đi sai làn đường",
-                                        "Không đội mũ bảo hiểm", "Dừng xe sai nơi quy định",
-                                    ]),
-                                    "explanation": f"Lỗi vi phạm phổ biến: {violation}. {action}",
-                                },
-                            ]
-                            st.session_state.webcam_quiz = random.choice(templates)
+                            
+                            if "AI" in selected_mode:
+                                from traffic_sign_app.services.chatbot import generate_quiz_with_llm
+                                with st.spinner("AI đang tạo câu hỏi..."):
+                                    quiz_result = generate_quiz_with_llm(current_sign, difficulty="easy")
+                                    if quiz_result:
+                                        st.session_state.webcam_quiz = quiz_result
+                                    else:
+                                        st.error("Lỗi tạo câu hỏi bằng AI. Có thể bạn chưa cài đặt API Key.")
+                            else:
+                                import random
+                                sign_name = current_sign.get("short_name") or current_sign.get("class_name", "biển báo")
+                                meaning = current_sign.get("meaning", "Cảnh báo nguy hiểm")
+                                action = current_sign.get("driver_action", "Tuân thủ quy định giao thông")
+                                violation = current_sign.get("common_violation", "Không tuân thủ biển báo")
+                                distractors_action = [
+                                    "Tăng tốc để vượt qua nhanh",
+                                    "Dừng xe hoàn toàn và chờ",
+                                    "Nhường đường cho xe ngược chiều",
+                                    "Bật đèn hazard và dừng lại",
+                                ]
+                                distractors_meaning = [
+                                    "Cho phép đi nhanh hơn tốc độ bình thường",
+                                    "Đường ưu tiên, không cần nhường",
+                                    "Khu vực không giới hạn tốc độ",
+                                    "Cấm tất cả phương tiện",
+                                ]
+                                templates = [
+                                    {
+                                        "question": f"Khi gặp **{sign_name}**, tài xế cần làm gì?",
+                                        "answer": action,
+                                        "options": _generate_quiz_options(action, distractors_action),
+                                        "explanation": f"Biển **{sign_name}**: {meaning}. Hành động đúng: {action}",
+                                    },
+                                    {
+                                        "question": f"**{sign_name}** có ý nghĩa gì?",
+                                        "answer": meaning,
+                                        "options": _generate_quiz_options(meaning, distractors_meaning),
+                                        "explanation": f"Ý nghĩa: {meaning}. {action}",
+                                    },
+                                    {
+                                        "question": f"Lỗi vi phạm thường gặp khi không chấp hành **{sign_name}** là?",
+                                        "answer": violation,
+                                        "options": _generate_quiz_options(violation, [
+                                            "Vượt đèn đỏ", "Đi sai làn đường",
+                                            "Không đội mũ bảo hiểm", "Dừng xe sai nơi quy định",
+                                        ]),
+                                        "explanation": f"Lỗi vi phạm phổ biến: {violation}. {action}",
+                                    },
+                                ]
+                                st.session_state.webcam_quiz = random.choice(templates)
 
                         quiz = st.session_state.get("webcam_quiz")
                         if quiz:
