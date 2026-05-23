@@ -17,6 +17,8 @@ ENV/
 env/
 pyvenv.cfg
 .python-version
+.env
+
 
 # IDEs and editors
 .idea/

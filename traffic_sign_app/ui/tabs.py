@@ -527,6 +527,16 @@ def render_model_evaluation_tab(model, classes: list[str]) -> None:
         st.info("Chưa tìm thấy file đánh giá model. Bạn có thể chạy val hoặc train để sinh các biểu đồ này.")
 
 
+def _generate_quiz_options(correct: str, distractors: list[str]) -> list[str]:
+    """Build a shuffled 4-option list with one correct answer."""
+    import random
+    correct = (correct or "Tuân thủ quy định giao thông").strip()
+    pool = [d for d in distractors if d.strip() != correct][:3]
+    options = [correct] + pool
+    random.shuffle(options)
+    return options
+
+
 def render_webcam_tab(
     model,
     signs_data: dict,
@@ -538,9 +548,12 @@ def render_webcam_tab(
     video_stride: int,
     selected_vehicle_type: str,
 ) -> None:
-    """Render a Streamlit WebRTC webcam demo with safe dependency fallback."""
-    st.header("Webcam realtime")
-    st.caption("Demo detect trực tiếp bằng webcam. Tính năng này chạy tốt nhất khi mở app trên máy local có camera.")
+    """Render webcam demo with split-panel layout: camera left, info panel right."""
+    st.markdown("<div class='section-title'>Webcam Realtime</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-subtitle'>Nhận diện biển báo trực tiếp từ camera · Lịch sử track · TTS cảnh báo · Quiz nhanh</div>",
+        unsafe_allow_html=True,
+    )
 
     if model is None:
         st.info("Chưa thể chạy webcam vì model chưa sẵn sàng.")
@@ -643,48 +656,197 @@ def render_webcam_tab(
                     "latest_signs": list(self.latest_signs),
                 }
 
-    ctx = webrtc_streamer(
-        key="traffic-sign-webcam",
-        mode=WebRtcMode.SENDRECV,
-        video_processor_factory=TrafficSignVideoProcessor,
-        media_stream_constraints={"video": True, "audio": False},
-        async_processing=True,
+    # ── Session state ───────────────────────────────────────────────────────
+    st.session_state.setdefault("webcam_enable_speech", enable_speech)
+    st.session_state.setdefault("webcam_track_history", [])
+    st.session_state.setdefault("webcam_quiz", None)
+    st.session_state.setdefault("webcam_quiz_checked", False)
+
+    # ── TTS toggle (above camera) ───────────────────────────────────────────
+    tts_on = st.toggle(
+        "🔊 Đọc cảnh báo bằng giọng nói (TTS)",
+        value=st.session_state.webcam_enable_speech,
+        key="webcam_tts_toggle",
     )
+    st.session_state.webcam_enable_speech = tts_on
 
-    if not ctx.state.playing:
-        st.info("Bấm START để bật webcam. Trình duyệt có thể hỏi quyền truy cập camera.")
-        return
+    # ── Split layout ────────────────────────────────────────────────────────
+    cam_col, info_col = st.columns([3, 2], gap="medium")
 
-    processor = ctx.video_processor
-    if not processor:
-        st.info("Đang khởi tạo webcam...")
-        return
+    with cam_col:
+        ctx = webrtc_streamer(
+            key="traffic-sign-webcam",
+            mode=WebRtcMode.SENDRECV,
+            video_processor_factory=TrafficSignVideoProcessor,
+            media_stream_constraints={"video": True, "audio": False},
+            async_processing=True,
+        )
+        if not ctx.state.playing:
+            st.info("Bấm **START** để bật webcam. Trình duyệt sẽ hỏi quyền truy cập camera.")
+        elif show_performance:
+            processor = ctx.video_processor
+            if processor:
+                s = processor.get_stats()
+                m1, m2, m3 = st.columns(3)
+                m1.metric("FPS TB", f"{s['avg_fps']:.1f}")
+                m2.metric("Frames", s["processed_frames"])
+                m3.metric("Detections", s["total_detections"])
 
-    stats = processor.get_stats()
-    if show_performance:
-        c1, c2, c3 = st.columns(3)
-        c1.metric("FPS realtime TB", f"{stats['avg_fps']:.2f}")
-        c2.metric("Frame đã detect", stats["processed_frames"])
-        c3.metric("Tổng detection", stats["total_detections"])
-        st.caption(f"Inference gần nhất: {stats['last_inference_time'] * 1000:.1f} ms")
-
-    latest_signs = stats.get("latest_signs") or []
-    latest_detections = stats.get("latest_detections") or []
-    if latest_signs:
-        st.subheader("Cảnh báo gần nhất")
-        for idx, (sign_info, detection) in enumerate(zip(latest_signs[:3], latest_detections[:3])):
-            show_sign_info(
-                sign_info,
-                detection,
-                selected_vehicle_type,
-                key_prefix=f"webcam_{idx}_{detection.get('class_id')}",
+    # ── Right info panel ────────────────────────────────────────────────────
+    with info_col:
+        if not ctx.state.playing:
+            st.markdown(
+                "<div style='padding:2.5rem 1rem;text-align:center;opacity:.45;font-size:2rem;'>📷</div>"
+                "<div style='text-align:center;opacity:.45;'>Chưa có tín hiệu camera</div>",
+                unsafe_allow_html=True,
             )
-        if enable_speech and st.button("Đọc cảnh báo webcam gần nhất"):
-            class_id = latest_signs[0].get("class_id")
-            if should_speak(class_id, cooldown_seconds=8):
-                speak_sign(latest_signs[0])
+        else:
+            processor = ctx.video_processor
+            if not processor:
+                st.info("Đang khởi tạo camera...")
             else:
-                st.info("Cảnh báo này vừa được đọc, vui lòng chờ cooldown.")
+                stats = processor.get_stats()
+                latest_signs: list[dict] = stats.get("latest_signs") or []
+                latest_detections: list[dict] = stats.get("latest_detections") or []
+
+                # ── Sign info card ─────────────────────────────────────
+                st.markdown("#### 🚦 Biển báo gần nhất")
+                if latest_signs:
+                    top_sign = latest_signs[0]
+                    top_det = latest_detections[0] if latest_detections else {}
+                    conf = float(top_det.get("confidence", 0.0))
+                    st.session_state.last_sign_info = top_sign
+
+                    # Update in-tab track history (dedupe by class_id)
+                    history: list[dict] = st.session_state.webcam_track_history
+                    if not history or history[-1].get("class_id") != top_sign.get("class_id"):
+                        history.append({
+                            "class_id": top_sign.get("class_id"),
+                            "name": top_sign.get("short_name") or top_sign.get("class_name", "?"),
+                            "conf": conf,
+                            "time": time.strftime("%H:%M:%S"),
+                        })
+                        st.session_state.webcam_track_history = history[-10:]
+
+                    with st.container(border=True):
+                        st.markdown(
+                            f"**{top_sign.get('short_name') or top_sign.get('class_name', 'Biển báo')}**"
+                            f"&nbsp;&nbsp;`{conf:.2f}`"
+                        )
+                        meaning = top_sign.get('meaning', '—')
+                        st.caption(meaning if len(meaning) <= 120 else meaning[:117] + "...")
+                        st.markdown(f"🚗 **Hành động:** {top_sign.get('driver_action', '—')}")
+                        st.markdown(f"⚠️ **Cảnh báo:** {top_sign.get('warning', '—')}")
+
+                    # Auto TTS
+                    if tts_on:
+                        if should_speak(top_sign.get("class_id"), cooldown_seconds=8):
+                            audio_path = text_to_speech(generate_speech_text(top_sign), AUDIO_DIR)
+                            if audio_path:
+                                st.audio(audio_path, autoplay=True)
+
+                    if st.button("🔊 Đọc ngay", key="webcam_speak_btn"):
+                        audio_path = text_to_speech(generate_speech_text(top_sign), AUDIO_DIR)
+                        if audio_path:
+                            st.audio(audio_path, autoplay=True)
+                        else:
+                            st.warning("Không tạo được audio TTS.")
+
+                else:
+                    st.markdown(
+                        "<div style='padding:1rem;text-align:center;opacity:.5;'>Chưa phát hiện biển báo...</div>",
+                        unsafe_allow_html=True,
+                    )
+
+                st.divider()
+
+                # ── Track history ──────────────────────────────────────
+                with st.expander("📋 Lịch sử nhận diện", expanded=True):
+                    history = st.session_state.webcam_track_history
+                    if history:
+                        rows = [
+                            {"Giờ": h["time"], "Biển báo": h["name"], "Conf": f"{h['conf']:.2f}"}
+                            for h in reversed(history)
+                        ]
+                        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+                        if st.button("🗑️ Xóa lịch sử", key="webcam_clear_track"):
+                            st.session_state.webcam_track_history = []
+                            st.rerun()
+                    else:
+                        st.caption("Chưa có dữ liệu track.")
+
+                st.divider()
+
+                # ── Inline Quiz Generator ──────────────────────────────
+                st.markdown("#### 🧠 Quiz nhanh")
+                current_sign = st.session_state.get("last_sign_info")
+                if current_sign:
+                    if st.button("⚡ Tạo câu hỏi", key="webcam_gen_quiz", type="primary"):
+                        st.session_state.webcam_quiz_checked = False
+                        st.session_state.webcam_quiz = None
+                        import random
+                        sign_name = current_sign.get("short_name") or current_sign.get("class_name", "biển báo")
+                        meaning = current_sign.get("meaning", "Cảnh báo nguy hiểm")
+                        action = current_sign.get("driver_action", "Tuân thủ quy định giao thông")
+                        violation = current_sign.get("common_violation", "Không tuân thủ biển báo")
+                        distractors_action = [
+                            "Tăng tốc để vượt qua nhanh",
+                            "Dừng xe hoàn toàn và chờ",
+                            "Nhường đường cho xe ngược chiều",
+                            "Bật đèn hazard và dừng lại",
+                        ]
+                        distractors_meaning = [
+                            "Cho phép đi nhanh hơn tốc độ bình thường",
+                            "Đường ưu tiên, không cần nhường",
+                            "Khu vực không giới hạn tốc độ",
+                            "Cấm tất cả phương tiện",
+                        ]
+                        templates = [
+                            {
+                                "question": f"Khi gặp **{sign_name}**, tài xế cần làm gì?",
+                                "answer": action,
+                                "options": _generate_quiz_options(action, distractors_action),
+                                "explanation": f"Biển **{sign_name}**: {meaning}. Hành động đúng: {action}",
+                            },
+                            {
+                                "question": f"**{sign_name}** có ý nghĩa gì?",
+                                "answer": meaning,
+                                "options": _generate_quiz_options(meaning, distractors_meaning),
+                                "explanation": f"Ý nghĩa: {meaning}. {action}",
+                            },
+                            {
+                                "question": f"Lỗi vi phạm thường gặp khi không chấp hành **{sign_name}** là?",
+                                "answer": violation,
+                                "options": _generate_quiz_options(violation, [
+                                    "Vượt đèn đỏ", "Đi sai làn đường",
+                                    "Không đội mũ bảo hiểm", "Dừng xe sai nơi quy định",
+                                ]),
+                                "explanation": f"Lỗi vi phạm phổ biến: {violation}. {action}",
+                            },
+                        ]
+                        st.session_state.webcam_quiz = random.choice(templates)
+
+                    quiz = st.session_state.get("webcam_quiz")
+                    if quiz:
+                        with st.container(border=True):
+                            st.markdown(quiz["question"])
+                            choice = st.radio(
+                                "Đáp án:",
+                                quiz["options"],
+                                key="webcam_quiz_radio",
+                                index=None,
+                            )
+                            if st.button("✅ Kiểm tra", key="webcam_check_quiz"):
+                                st.session_state.webcam_quiz_checked = True
+                            if st.session_state.webcam_quiz_checked and choice:
+                                correct = quiz["answer"]
+                                if choice.strip() == correct.strip() or correct.strip() in choice:
+                                    st.success("🎉 Đúng rồi!")
+                                else:
+                                    st.error(f"❌ Chưa đúng. Đáp án: {correct}")
+                                st.info(f"💡 {quiz['explanation']}")
+                else:
+                    st.caption("Bật webcam và để AI phát hiện biển báo để tạo quiz.")
 
 
 def render_lookup_tab(signs_data: dict, enable_speech: bool, selected_vehicle_type: str) -> None:
@@ -863,30 +1025,235 @@ def render_chat_tab(signs_data: dict, selected_vehicle_type: str) -> None:
 
 
 def render_quiz_tab(signs_data: dict, scenarios: dict) -> None:
-    """Render quiz and learning scenario workflow."""
-    st.header("Quiz / Tình huống học tập")
-    st.caption("Luyện tập nhanh với các tình huống thường gặp trong bộ dữ liệu biển báo.")
-    if not scenarios:
-        st.warning("Chưa có dữ liệu tình huống trong data/scenarios.json.")
-        return
+    """Render quiz tab with static scenarios and AI-generated quiz modes."""
+    from traffic_sign_app.services.chatbot import generate_quiz_with_llm
+    import os
 
-    scenario_items = sorted(scenarios.items(), key=lambda item: int(item[0]))
-    selected = st.selectbox(
-        "Chọn tình huống",
-        scenario_items,
-        format_func=lambda item: f"{item[0]} - {signs_data.get(item[0], {}).get('short_name', 'Tình huống')}",
+    st.markdown("<div class='section-title'>Quiz & Luyện tập</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-subtitle'>Luyện thi luật giao thông với câu hỏi tĩnh hoặc câu hỏi AI tạo ra theo yêu cầu.</div>",
+        unsafe_allow_html=True,
     )
-    class_id, scenario = selected
-    with st.container(border=True):
-        st.info(scenario.get("scenario", ""))
-        st.write(f"**Câu hỏi:** {scenario.get('question', '')}")
-        choice = st.radio("Đáp án", scenario.get("options", []), key=f"quiz_{class_id}")
-        if st.button("Kiểm tra đáp án"):
-            if choice == scenario.get("answer"):
-                st.success("Đúng rồi.")
+
+    # ── Session state ────────────────────────────────────────────────────────
+    st.session_state.setdefault("quiz_mode", "static")
+    st.session_state.setdefault("quiz_score", {"correct": 0, "total": 0})
+    st.session_state.setdefault("quiz_llm_result", None)
+    st.session_state.setdefault("quiz_llm_checked", False)
+    st.session_state.setdefault("quiz_llm_choice", None)
+    st.session_state.setdefault("quiz_static_checked", False)
+
+    has_api = bool(os.environ.get("OPENAI_API_KEY"))
+
+    # ── Mode selector ────────────────────────────────────────────────────────
+    mode_col, score_col = st.columns([3, 1])
+    with mode_col:
+        mode_options = ["📋 Câu hỏi tĩnh (scenarios.json)", "🤖 AI tạo câu hỏi (GPT-4o-mini)"]
+        selected_mode_label = st.radio(
+            "Chế độ luyện tập",
+            mode_options,
+            horizontal=True,
+            key="quiz_mode_radio",
+        )
+        st.session_state.quiz_mode = "llm" if "AI" in selected_mode_label else "static"
+    with score_col:
+        sc = st.session_state.quiz_score
+        total = sc["total"]
+        pct = int(sc["correct"] / total * 100) if total else 0
+        st.metric("🏆 Điểm", f"{sc['correct']}/{total}", f"{pct}%")
+        if st.button("↺ Reset điểm", key="quiz_reset_score"):
+            st.session_state.quiz_score = {"correct": 0, "total": 0}
+            st.rerun()
+
+    st.divider()
+
+    # ════════════════════════════════════════════════════════════════════════
+    # MODE 1 — STATIC SCENARIOS
+    # ════════════════════════════════════════════════════════════════════════
+    if st.session_state.quiz_mode == "static":
+        if not scenarios:
+            st.warning("Chưa có dữ liệu tình huống trong data/scenarios.json.")
+            return
+
+        scenario_items = sorted(scenarios.items(), key=lambda item: int(item[0]))
+        selected = st.selectbox(
+            "Chọn tình huống",
+            scenario_items,
+            format_func=lambda item: (
+                f"{item[0]} – {signs_data.get(item[0], {}).get('short_name', 'Tình huống')}"
+            ),
+            key="quiz_static_select",
+        )
+        class_id, scenario = selected
+
+        with st.container(border=True):
+            st.info(scenario.get("scenario", ""))
+            st.markdown(f"**❓ Câu hỏi:** {scenario.get('question', '')}")
+            choice = st.radio(
+                "Chọn đáp án:",
+                scenario.get("options", []),
+                key=f"quiz_static_{class_id}",
+                index=None,
+            )
+            btn_check = st.button("✅ Kiểm tra đáp án", key="quiz_static_check", type="primary")
+            if btn_check and choice:
+                st.session_state.quiz_static_checked = True
+                correct = scenario.get("answer")
+                is_ok = choice == correct
+                st.session_state.quiz_score["total"] += 1
+                if is_ok:
+                    st.session_state.quiz_score["correct"] += 1
+                    st.success("🎉 Đúng rồi!")
+                else:
+                    st.error(f"❌ Chưa đúng. Đáp án đúng: **{correct}**")
+                st.info(f"💡 {scenario.get('explanation', '')}")
+            elif btn_check and not choice:
+                st.warning("Hãy chọn một đáp án trước khi kiểm tra.")
+
+    # ════════════════════════════════════════════════════════════════════════
+    # MODE 2 — AI-GENERATED QUIZ
+    # ════════════════════════════════════════════════════════════════════════
+    else:
+        if not has_api:
+            st.warning(
+                "Chức năng này cần **OpenAI API Key**. "
+                "Hãy thêm `OPENAI_API_KEY=...` vào file `.env` ở thư mục gốc dự án.",
+                icon="🔑",
+            )
+            return
+
+        # ── Controls ─────────────────────────────────────────────────────
+        ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([2, 1, 1])
+        with ctrl_col1:
+            sign_items = sorted(signs_data.items(), key=lambda item: int(item[0]))
+
+            def _sign_label(entry: tuple) -> str:
+                _, info = entry
+                code = info.get("code") or f"ID {info.get('class_id', '')}"
+                name = info.get("class_name") or info.get("short_name", "Biển báo")
+                return f"{code} – {name}"
+
+            # Pre-select last detected sign if available
+            last_sign = st.session_state.get("last_sign_info")
+            default_idx = 0
+            if last_sign:
+                for i, (cid, _) in enumerate(sign_items):
+                    if str(cid) == str(last_sign.get("class_id")):
+                        default_idx = i
+                        break
+
+            sign_choice = st.selectbox(
+                "Chọn biển báo để tạo quiz",
+                sign_items,
+                format_func=_sign_label,
+                index=default_idx,
+                key="quiz_llm_sign_select",
+            )
+
+        with ctrl_col2:
+            difficulty = st.selectbox(
+                "Độ khó",
+                ["easy", "medium", "hard"],
+                index=1,
+                format_func=lambda x: {"easy": "🟢 Dễ", "medium": "🟡 Trung bình", "hard": "🔴 Khó"}[x],
+                key="quiz_llm_difficulty",
+            )
+
+        with ctrl_col3:
+            st.markdown("<br>", unsafe_allow_html=True)  # vertical align
+            gen_btn = st.button("⚡ Tạo câu hỏi AI", key="quiz_llm_generate", type="primary")
+
+        selected_sign_info = sign_choice[1]
+        sign_label_str = _sign_label(sign_choice)
+
+        # ── Generate via LLM ─────────────────────────────────────────────
+        if gen_btn:
+            st.session_state.quiz_llm_checked = False
+            st.session_state.quiz_llm_choice = None
+            st.session_state.quiz_llm_result = None
+            with st.spinner(f"🤖 GPT-4o-mini đang tạo câu hỏi về **{sign_label_str}**..."):
+                result = generate_quiz_with_llm(selected_sign_info, difficulty=difficulty)
+            if result:
+                st.session_state.quiz_llm_result = result
+                st.toast("Câu hỏi đã được tạo!", icon="✅")
             else:
-                st.error(f"Chưa đúng. Đáp án đúng: {scenario.get('answer')}")
-            st.write(scenario.get("explanation", ""))
+                st.error(
+                    "Không thể tạo câu hỏi từ AI lúc này (lỗi API hoặc mất kết nối). "
+                    "Thử lại sau hoặc dùng chế độ câu hỏi tĩnh."
+                )
+
+        # ── Render quiz card ─────────────────────────────────────────────
+        quiz = st.session_state.get("quiz_llm_result")
+        if quiz:
+            diff_badge = {"easy": "🟢 Dễ", "medium": "🟡 Trung bình", "hard": "🔴 Khó"}.get(
+                difficulty, difficulty
+            )
+            st.markdown(
+                f"<div style='font-size:0.8rem;opacity:.6;margin-bottom:.3rem;'>"
+                f"🤖 AI tạo · {sign_label_str} · {diff_badge}</div>",
+                unsafe_allow_html=True,
+            )
+            with st.container(border=True):
+                st.markdown(f"**❓ {quiz['question']}**")
+                st.markdown("")
+
+                choice = st.radio(
+                    "Chọn đáp án:",
+                    quiz["options"],
+                    key="quiz_llm_radio",
+                    index=None,
+                )
+                st.session_state.quiz_llm_choice = choice
+
+                btn_col1, btn_col2 = st.columns([1, 1])
+                check_btn = btn_col1.button("✅ Kiểm tra", key="quiz_llm_check", type="primary")
+                next_btn  = btn_col2.button("⏭️ Câu tiếp theo", key="quiz_llm_next")
+
+                if check_btn:
+                    if not choice:
+                        st.warning("Hãy chọn một đáp án trước!")
+                    else:
+                        st.session_state.quiz_llm_checked = True
+                        correct = quiz["answer"]
+                        is_ok = choice.strip() == correct.strip() or correct.strip() in choice
+                        st.session_state.quiz_score["total"] += 1
+                        if is_ok:
+                            st.session_state.quiz_score["correct"] += 1
+                            st.success("🎉 Đúng rồi!")
+                        else:
+                            st.error(f"❌ Chưa đúng. Đáp án đúng: **{correct}**")
+                        st.info(f"💡 {quiz['explanation']}")
+
+                elif st.session_state.quiz_llm_checked and choice:
+                    # Re-render result after page reflow
+                    correct = quiz["answer"]
+                    is_ok = choice.strip() == correct.strip() or correct.strip() in choice
+                    if is_ok:
+                        st.success("🎉 Đúng rồi!")
+                    else:
+                        st.error(f"❌ Chưa đúng. Đáp án đúng: **{correct}**")
+                    st.info(f"💡 {quiz['explanation']}")
+
+                if next_btn:
+                    # Auto-generate next question for same sign
+                    st.session_state.quiz_llm_checked = False
+                    st.session_state.quiz_llm_choice = None
+                    st.session_state.quiz_llm_result = None
+                    with st.spinner("Đang tạo câu hỏi tiếp theo..."):
+                        result = generate_quiz_with_llm(selected_sign_info, difficulty=difficulty)
+                    if result:
+                        st.session_state.quiz_llm_result = result
+                    else:
+                        st.error("Không thể tạo câu hỏi tiếp theo. Thử lại sau.")
+                    st.rerun()
+        else:
+            st.markdown(
+                "<div style='text-align:center;padding:2rem;opacity:.5;'>"
+                "Chọn biển báo và bấm <strong>⚡ Tạo câu hỏi AI</strong> để bắt đầu luyện tập."
+                "</div>",
+                unsafe_allow_html=True,
+            )
+
 
 
 def render_history_tab() -> None:

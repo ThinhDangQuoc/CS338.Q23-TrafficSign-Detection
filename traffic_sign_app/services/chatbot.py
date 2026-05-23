@@ -1,11 +1,26 @@
-"""Small rule-based chatbot for the selected/detected traffic sign."""
+"""Dual-engine chatbot for traffic sign education and Q&A.
+
+Supports high-performance GPT-4o-mini (RAG-augmented) with auto-fallback to rule-based engine.
+"""
 
 from __future__ import annotations
 
+import os
 import unicodedata
+import requests
+from pathlib import Path
 
 from traffic_sign_app.core.warning_engine import format_penalty_explanation, generate_full_explanation
 from traffic_sign_app.services.knowledge_base import get_penalties_for_sign, get_speed_penalty
+
+# Check for .env file and load manually to avoid external dependency issues
+ENV_PATH = Path(__file__).parents[2] / ".env"
+if ENV_PATH.exists():
+    with open(ENV_PATH, "r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip() and not line.startswith("#") and "=" in line:
+                key, val = line.strip().split("=", 1)
+                os.environ[key.strip()] = val.strip().strip("'\"")
 
 
 def _normalize(text: str) -> str:
@@ -29,16 +44,13 @@ def _is_penalty_question(normalized_question: str) -> bool:
     )
 
 
-def answer_question(
+def get_rule_based_answer(
     question: str,
-    sign_info: dict | None,
+    sign_info: dict,
     vehicle_type: str | None = None,
     actual_speed: int | float | None = None,
 ) -> str:
-    """Answer a Vietnamese question using fields from the current sign."""
-    if not sign_info:
-        return "Bạn hãy nhận diện hoặc chọn một biển báo trước, rồi mình sẽ giải thích theo biển đó."
-
+    """Fallback rule-based answering engine."""
     q = _normalize(question or "")
     if not q.strip():
         return "Bạn có thể hỏi về ý nghĩa, cần làm gì, lỗi vi phạm, mức phạt tham khảo, ví dụ hoặc cảnh báo."
@@ -47,6 +59,7 @@ def answer_question(
         return sign_info.get("meaning", "Chưa có dữ liệu ý nghĩa cho biển này.")
     if any(keyword in q for keyword in ["lam gi", "can lam gi", "xu ly", "hanh dong"]):
         return sign_info.get("driver_action", "Chưa có dữ liệu hành động cần làm cho biển này.")
+    
     if _is_penalty_question(q):
         if sign_info.get("speed_limit_value") is not None:
             if actual_speed is None:
@@ -76,3 +89,202 @@ def answer_question(
         return sign_info.get("warning", "Hãy chú ý quan sát và tuân thủ quy định.")
 
     return generate_full_explanation(sign_info)
+
+
+def answer_question(
+    question: str,
+    sign_info: dict | None,
+    vehicle_type: str | None = None,
+    actual_speed: int | float | None = None,
+) -> str:
+    """Answer a Vietnamese question using OpenAI GPT model with local fallback."""
+    if not sign_info:
+        return "Bạn hãy nhận diện hoặc chọn một biển báo trước, rồi mình sẽ giải thích theo biển đó."
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    
+    # If no API key is set, immediately use rule-based fallback
+    if not api_key:
+        return get_rule_based_answer(question, sign_info, vehicle_type, actual_speed)
+
+    # Auto-route between standard OpenAI endpoint and GitHub Models endpoint
+    if api_key.startswith("github_pat_"):
+        api_url = "https://models.inference.ai.azure.com/chat/completions"
+    else:
+        api_url = "https://api.openai.com/v1/chat/completions"
+
+    # Context Retrieval for RAG (forces GPT to match our local SQLite knowledge database)
+    short_name = sign_info.get("short_name", "biển báo giao thông")
+    meaning = sign_info.get("meaning", "Chưa có ý nghĩa chi tiết.")
+    action = sign_info.get("driver_action", "Tuân thủ quy định giao thông.")
+    warning = sign_info.get("warning", "Hãy chú ý quan sát.")
+    violation = sign_info.get("common_violation", "Chưa có dữ liệu lỗi thường gặp.")
+    example = sign_info.get("example", "Chưa có ví dụ.")
+    
+    # Resolve penalty info for context
+    if sign_info.get("speed_limit_value") is not None and actual_speed is not None:
+        penalty_record = get_speed_penalty(sign_info.get("speed_limit_value"), actual_speed, vehicle_type or "car")
+        penalty_text = format_penalty_explanation(penalty_record, vehicle_type)
+    else:
+        penalty_records = get_penalties_for_sign(sign_info.get("class_id"), vehicle_type=vehicle_type or "car")
+        penalty_text = format_penalty_explanation(penalty_records, vehicle_type)
+
+    system_prompt = (
+        "Bạn là một chuyên gia hỗ trợ về luật giao thông đường bộ Việt Nam và hệ thống biển báo.\n"
+        "Hãy trả lời câu hỏi của người dùng một cách thân thiện, chính xác dựa trên ngữ cảnh biển báo được cung cấp dưới đây.\n\n"
+        f"--- NGỮ CẢNH BIỂN BÁO ĐANG CHỌN ---\n"
+        f"Tên biển báo: {short_name}\n"
+        f"Ý nghĩa: {meaning}\n"
+        f"Hành động người lái cần thực hiện: {action}\n"
+        f"Lỗi vi phạm thường gặp: {violation}\n"
+        f"Cảnh báo: {warning}\n"
+        f"Ví dụ thực tế: {example}\n"
+        f"Mức phạt vi phạm (cho loại phương tiện {vehicle_type or 'ô tô'}): {penalty_text}\n"
+        "------------------------------------\n\n"
+        "QUY TẮC TRẢ LỜI:\n"
+        "1. Trả lời bằng tiếng Việt lịch sự, dễ hiểu và dùng markdown để làm nổi bật các ý chính.\n"
+        "2. Hãy bám sát vào ngữ cảnh được cung cấp ở trên để giải thích chính xác theo luật Việt Nam.\n"
+        "3. Nếu người dùng hỏi những thông tin ngoài lề biển báo này, hãy lịch sự trả lời và liên hệ khéo léo lại với luật giao thông hoặc biển báo hiện tại."
+    )
+
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "model": "gpt-4o-mini",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": question}
+            ],
+            "temperature": 0.5,
+            "max_tokens": 800
+        }
+        
+        response = requests.post(
+            api_url,
+            headers=headers,
+            json=data,
+            timeout=8
+        )
+        
+        if response.status_code == 200:
+            return response.json()["choices"][0]["message"]["content"]
+        else:
+            # Check for insufficient quota (429) or other errors, fallback to rule-based
+            err_msg = response.json().get("error", {}).get("message", "")
+            rule_ans = get_rule_based_answer(question, sign_info, vehicle_type, actual_speed)
+            if "insufficient_quota" in err_msg or response.status_code == 429:
+                return (
+                    f"{rule_ans}\n\n"
+                    f"*(⚠️ Trợ lý AI đang tạm thời sử dụng dữ liệu cục bộ do khóa API của bạn đã hết hạn mức (Quota Exceeded). "
+                    f"Vui lòng nạp tiền hoặc đổi khóa API khác trong file .env để tiếp tục trò chuyện với GPT-4o-mini!)*"
+                )
+            return rule_ans
+
+    except Exception:
+        # Catch any timeout/network disconnect exceptions and fallback
+        return get_rule_based_answer(question, sign_info, vehicle_type, actual_speed)
+
+
+def generate_quiz_with_llm(sign_info: dict, difficulty: str = "medium") -> dict | None:
+    """Generate a quiz question via LLM for a given traffic sign.
+
+    Returns a dict with keys: question, options (list[str]), answer (str), explanation (str).
+    Returns None if API is unavailable; caller should fall back to static scenarios.
+
+    Args:
+        sign_info: Sign knowledge dict from SQLite/JSON.
+        difficulty: "easy" | "medium" | "hard" — controls question complexity.
+    """
+    import json as _json
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return None
+
+    api_url = (
+        "https://models.inference.ai.azure.com/chat/completions"
+        if api_key.startswith("github_pat_")
+        else "https://api.openai.com/v1/chat/completions"
+    )
+
+    short_name = sign_info.get("short_name") or sign_info.get("class_name", "biển báo giao thông")
+    meaning    = sign_info.get("meaning", "")
+    action     = sign_info.get("driver_action", "")
+    violation  = sign_info.get("common_violation", "")
+    warning    = sign_info.get("warning", "")
+    example    = sign_info.get("example", "")
+    sign_type  = sign_info.get("type", "")
+
+    difficulty_guide = {
+        "easy":   "Tạo câu hỏi nhận biết đơn giản về ý nghĩa biển báo, phù hợp người mới học.",
+        "medium": "Tạo câu hỏi áp dụng thực tế về hành động cần làm khi gặp biển, độ khó trung bình.",
+        "hard":   "Tạo câu hỏi phân tích tình huống phức tạp, kết hợp nhiều quy tắc giao thông, độ khó cao.",
+    }
+
+    system_prompt = (
+        "Bạn là chuyên gia ra đề thi luật giao thông đường bộ Việt Nam.\n"
+        "Nhiệm vụ: tạo MỘT câu hỏi trắc nghiệm 4 đáp án về biển báo được cung cấp.\n\n"
+        f"Mức độ: {difficulty_guide.get(difficulty, difficulty_guide['medium'])}\n\n"
+        "Yêu cầu định dạng output - CHỈ trả về JSON, không có text nào khác:\n"
+        "{\n"
+        '  "question": "Nội dung câu hỏi (có thể kèm tình huống ngắn)",\n'
+        '  "options": ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],\n'
+        '  "answer": "Đáp án đúng (copy nguyên văn từ options)",\n'
+        '  "explanation": "Giải thích tại sao đúng, dẫn chiếu ý nghĩa biển và hành động cần làm"\n'
+        "}\n\n"
+        "Quy tắc:\n"
+        "- Chỉ 1 đáp án đúng, 3 đáp án nhiễu hợp lý (không quá dễ loại trừ).\n"
+        "- Đáp án nhiễu phải liên quan đến luật giao thông, không vô nghĩa.\n"
+        "- Câu hỏi và đáp án viết bằng tiếng Việt, ngắn gọn, rõ ràng.\n"
+        "- field 'answer' phải là chuỗi GIỐNG HỆT một phần tử trong 'options'."
+    )
+
+    user_prompt = (
+        f"Biển báo: {short_name}\n"
+        f"Loại biển: {sign_type}\n"
+        f"Ý nghĩa: {meaning}\n"
+        f"Hành động người lái: {action}\n"
+        f"Lỗi vi phạm thường gặp: {violation}\n"
+        f"Cảnh báo: {warning}\n"
+        f"Ví dụ tình huống: {example}\n\n"
+        "Hãy tạo câu hỏi quiz theo đúng định dạng JSON yêu cầu."
+    )
+
+    try:
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+        payload = {
+            "model": "gpt-4o-mini",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user",   "content": user_prompt},
+            ],
+            "temperature": 0.8,   # slightly higher for creative variation
+            "max_tokens": 600,
+            "response_format": {"type": "json_object"},
+        }
+        resp = requests.post(api_url, headers=headers, json=payload, timeout=12)
+        if resp.status_code != 200:
+            return None
+
+        raw = resp.json()["choices"][0]["message"]["content"]
+        quiz = _json.loads(raw)
+
+        # Validate required keys
+        if not all(k in quiz for k in ("question", "options", "answer", "explanation")):
+            return None
+        if not isinstance(quiz["options"], list) or len(quiz["options"]) < 2:
+            return None
+        # Ensure answer is in options (fuzzy match fallback)
+        if quiz["answer"] not in quiz["options"]:
+            for opt in quiz["options"]:
+                if quiz["answer"].strip() in opt or opt.strip() in quiz["answer"]:
+                    quiz["answer"] = opt
+                    break
+
+        return quiz
+
+    except Exception:
+        return None
