@@ -14,6 +14,17 @@ from traffic_sign_app.core.warning_engine import (
     generate_warning,
 )
 from traffic_sign_app.services.knowledge_base import get_penalties_for_sign, get_speed_penalty, get_vehicle_label
+from traffic_sign_app.services.knowledge_base import get_sign_info
+
+
+def apply_short_labels(detections: list[dict], signs_data: dict) -> list[dict]:
+    """Mutate detection labels to be shorter for display, without changing IDs."""
+    for detection in detections:
+        sign_info = get_sign_info(detection.get("class_id"), signs_data)
+        short_name = sign_info.get("short_name") or sign_info.get("class_name")
+        if short_name:
+            detection["class_name"] = short_name
+    return detections
 from traffic_sign_app.services.speech import text_to_speech
 
 
@@ -107,5 +118,6 @@ def detect_and_render_image(
 ):
     """Detect signs and draw annotations for an image/frame."""
     detections = detect_image(model, image_rgb, conf_threshold, img_size)
+    apply_short_labels(detections, signs_data)
     annotated = draw_detections(image_rgb, detections, signs_data)
     return detections, annotated

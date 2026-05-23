@@ -28,6 +28,7 @@ from traffic_sign_app.services.knowledge_base import (
 from traffic_sign_app.services.reporting import export_history_csv, get_summary_stats
 from traffic_sign_app.services.speech import should_speak, text_to_speech
 from traffic_sign_app.ui.components import (
+    apply_short_labels,
     detect_and_render_image,
     render_explanation_card,
     render_penalty_card,
@@ -73,32 +74,73 @@ def render_image_tab(
     selected_vehicle_type: str,
 ) -> None:
     """Render image upload and detection workflow."""
-    st.header("Nhận diện từ ảnh")
-    st.caption("Tải ảnh để AI nhận diện biển báo và xem giải thích học tập.")
+    st.session_state.setdefault("image_results", None)
+    st.session_state.setdefault("image_file_name", None)
+    st.session_state.setdefault("image_is_processing", False)
+    st.session_state.setdefault("image_pending_detect", False)
+    st.session_state.setdefault("image_last_error", None)
+    st.session_state.setdefault("image_last_status", "idle")
+
+    st.markdown("<div class='section-title'>Nhận diện từ ảnh</div>", unsafe_allow_html=True)
     st.markdown(
-        """
-        <div class="stepper">
-            <div class="step"><strong>1.</strong> Tải ảnh</div>
-            <div class="step"><strong>2.</strong> AI nhận diện</div>
-            <div class="step"><strong>3.</strong> Xem giải thích</div>
-        </div>
-        """,
+        "<div class='section-subtitle'>Tải ảnh để AI nhận diện biển báo và xem giải thích học tập.</div>",
         unsafe_allow_html=True,
     )
 
+    stepper_placeholder = st.empty()
+
     with st.container(border=True):
         st.markdown("<div class=\"panel-title\">Chọn ảnh biển báo</div>", unsafe_allow_html=True)
-        uploaded_image = st.file_uploader("Chọn ảnh biển báo", type=["jpg", "jpeg", "png", "bmp", "webp"])
-        run_detect = st.button("Chạy nhận diện", type="primary")
+        st.markdown(
+            "<div class=\"panel-subtitle\">Kéo thả hoặc chọn file ảnh để bắt đầu.</div>",
+            unsafe_allow_html=True,
+        )
+        uploaded_image = st.file_uploader(
+            "Chọn ảnh biển báo",
+            type=["jpg", "jpeg", "png", "bmp", "webp"],
+            label_visibility="collapsed",
+        )
+        has_image = uploaded_image is not None or bool(st.session_state.image_file_name)
+        status_state = st.session_state.image_last_status
+        if st.session_state.image_is_processing:
+            status_state = "processing"
 
-    if "image_results" not in st.session_state:
-        st.session_state.image_results = None
-    if "image_file_name" not in st.session_state:
-        st.session_state.image_file_name = None
+        step_one_class = "step--done" if has_image else ""
+        step_two_class = "step--active" if status_state == "processing" else ("step--done" if status_state == "done" else "")
+        step_three_class = ""
+        if status_state == "done":
+            step_three_class = "step--done"
+        elif status_state == "no_detection":
+            step_three_class = "step--warning"
+        elif status_state == "error":
+            step_three_class = "step--error"
+
+        stepper_placeholder.markdown(
+            f"""
+            <div class="stepper">
+                <div class="step {step_one_class}"><strong>1.</strong> Tải ảnh</div>
+                <div class="step {step_two_class}"><strong>2.</strong> AI nhận diện</div>
+                <div class="step {step_three_class}"><strong>3.</strong> Xem giải thích</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        button_label = "Đang nhận diện..." if st.session_state.image_is_processing else (
+            "Nhận diện lại" if st.session_state.image_results else "Chạy nhận diện"
+        )
+        run_detect = st.button(
+            button_label,
+            type="primary",
+            disabled=st.session_state.image_is_processing or uploaded_image is None,
+        )
 
     if not uploaded_image:
+        st.session_state.image_last_status = "idle"
+        st.session_state.image_is_processing = False
+        st.session_state.image_pending_detect = False
         st.markdown(
-            "<div class=\"empty-state\">Chọn ảnh để bắt đầu quá trình nhận diện.</div>",
+            "<div class=\"empty-state\"><strong>Chưa có kết quả nhận diện</strong><br/>Hãy tải ảnh biển báo và bấm Chạy AI nhận diện để bắt đầu.</div>",
             unsafe_allow_html=True,
         )
         return
@@ -106,15 +148,27 @@ def render_image_tab(
     if st.session_state.image_file_name != uploaded_image.name:
         st.session_state.image_file_name = uploaded_image.name
         st.session_state.image_results = None
+        st.session_state.image_last_error = None
+        st.session_state.image_last_status = "selected"
+
+    if run_detect and not st.session_state.image_is_processing:
+        st.session_state.image_pending_detect = True
+        st.session_state.image_is_processing = True
+        st.rerun()
 
     try:
         image = Image.open(uploaded_image).convert("RGB")
         image_rgb = np.array(image)
         if model is None:
+            st.session_state.image_is_processing = False
+            st.session_state.image_pending_detect = False
             st.info("Chưa thể nhận diện vì model chưa sẵn sàng.")
             return
 
-        if run_detect:
+        if st.session_state.image_pending_detect:
+            st.session_state.image_pending_detect = False
+            st.session_state.image_last_error = None
+            st.session_state.image_last_status = "processing"
             with st.spinner("Đang nhận diện biển báo..."):
                 start = time.time()
                 detections, annotated = detect_and_render_image(
@@ -131,6 +185,15 @@ def render_image_tab(
                 "detections": detections,
                 "elapsed": elapsed,
             }
+            st.session_state.image_is_processing = False
+            st.session_state.image_last_status = "done" if detections else "no_detection"
+            if detections:
+                st.toast(f"Đã nhận diện {len(detections)} biển báo trong ảnh.", icon="✅")
+            else:
+                st.toast(
+                    "Chưa phát hiện biển báo phù hợp. Hãy thử ảnh rõ hơn hoặc giảm ngưỡng tin cậy.",
+                    icon="⚠️",
+                )
 
         results = st.session_state.image_results
         if not results:
@@ -141,6 +204,27 @@ def render_image_tab(
             return
 
         detections = results["detections"]
+        summary_card = ""
+        if detections:
+            best_conf = max(float(item.get("confidence", 0.0)) for item in detections)
+            summary_card = (
+                f"AI phát hiện {len(detections)} biển báo · "
+                f"Cao nhất: {best_conf:.2f} · "
+                f"Phương tiện: {get_vehicle_label(selected_vehicle_type)} · "
+                f"Ngưỡng: {conf_threshold:.2f}"
+            )
+        else:
+            summary_card = (
+                f"Chưa phát hiện biển báo · "
+                f"Phương tiện: {get_vehicle_label(selected_vehicle_type)} · "
+                f"Ngưỡng: {conf_threshold:.2f}"
+            )
+
+        st.markdown(
+            f"<div class='section-card result-highlight'><div class='panel-title'>Tóm tắt nhanh</div>{summary_card}</div>",
+            unsafe_allow_html=True,
+        )
+
         col_a, col_b = st.columns(2)
         with col_a.container(border=True):
             st.markdown("<div class=\"panel-title\">Ảnh gốc</div>", unsafe_allow_html=True)
@@ -168,39 +252,59 @@ def render_image_tab(
         primary_detection = max(detections, key=lambda item: float(item.get("confidence", 0.0)))
         primary_sign = get_sign_info(primary_detection["class_id"], signs_data)
         st.session_state.last_sign_info = primary_sign
+        st.session_state.last_detections = detections
 
+        with st.container(border=True):
+            st.markdown("<div class='panel-title'>Tóm tắt kết quả</div>", unsafe_allow_html=True)
+            rows = []
+            for detection in detections:
+                sign_info = get_sign_info(detection["class_id"], signs_data)
+                short_name = sign_info.get("short_name") or detection.get("class_name", "Biển báo")
+                rows.append(
+                    {
+                        "Biển báo": short_name,
+                        "Độ tin cậy": f"{float(detection.get('confidence', 0.0)):.2f}",
+                        "Ý nghĩa": sign_info.get("meaning", ""),
+                        "Cảnh báo": generate_warning(sign_info),
+                    }
+                )
+            summary_df = pd.DataFrame(rows)
+            st.dataframe(summary_df, use_container_width=True, hide_index=True)
+
+        option_labels = []
+        for item in detections:
+            sign_info = get_sign_info(item["class_id"], signs_data)
+            label_name = sign_info.get("short_name") or item.get("class_name", "Biển báo")
+            option_labels.append(f"{label_name} · {float(item.get('confidence', 0.0)):.2f}")
+        selected_label = st.selectbox(
+            "Chọn biển báo để xem chi tiết",
+            options=option_labels,
+        )
+        selected_index = option_labels.index(selected_label) if selected_label in option_labels else 0
+        selected_detection = detections[selected_index]
+        selected_sign = get_sign_info(selected_detection["class_id"], signs_data)
         info_col, penalty_col = st.columns(2)
         with info_col:
-            render_explanation_card(primary_sign)
+            render_explanation_card(selected_sign)
         with penalty_col:
-            render_penalty_card(primary_sign, selected_vehicle_type, key_prefix="img_primary")
-
-        st.subheader("Tóm tắt kết quả")
-        rows = []
-        for detection in detections:
-            sign_info = get_sign_info(detection["class_id"], signs_data)
-            short_name = sign_info.get("short_name") or detection.get("class_name", "Biển báo")
-            rows.append(
-                {
-                    "Biển báo": short_name,
-                    "Độ tin cậy": f"{float(detection.get('confidence', 0.0)):.2f}",
-                    "Ý nghĩa": sign_info.get("meaning", ""),
-                    "Cảnh báo": generate_warning(sign_info),
-                }
+            render_penalty_card(
+                selected_sign,
+                selected_vehicle_type,
+                key_prefix=f"img_selected_{selected_sign.get('class_id')}",
             )
-        summary_df = pd.DataFrame(rows)
-        st.dataframe(summary_df, use_container_width=True, hide_index=True)
 
-        action_col_1, action_col_2, action_col_3 = st.columns(3)
-        action_col_1.button("Xem chi tiết", disabled=True, help="Sắp có trong phiên bản tiếp theo.")
-        action_col_2.button(
-            "Lưu lịch sử",
-            disabled=True,
-            help="Lịch sử được lưu tự động khi bật tùy chọn ở sidebar.",
-        )
-        action_col_3.button("Tạo quiz", disabled=True, help="Sắp có trong phiên bản tiếp theo.")
+        action_col_1, action_col_2, action_col_3, action_col_4 = st.columns(4)
+        action_col_1.button("Xem giải thích", disabled=False)
+        action_col_2.button("Hỏi chatbot", disabled=True, help="Sẽ bổ sung sau")
+        action_col_3.button("Tạo quiz", disabled=True, help="Sẽ bổ sung sau")
+        action_col_4.button("Lưu vào lịch sử", disabled=True, help="Sẽ bổ sung sau")
+
     except Exception as exc:
-        st.error(f"Không xử lý được ảnh upload: {exc}")
+        st.session_state.image_last_error = "Không xử lý được ảnh đã tải. Vui lòng thử ảnh khác hoặc kiểm tra định dạng."
+        st.session_state.image_last_status = "error"
+        st.session_state.image_is_processing = False
+        st.session_state.image_pending_detect = False
+        st.error(st.session_state.image_last_error)
 
 
 def render_video_tab(
@@ -258,6 +362,7 @@ def render_video_tab(
             try:
                 inference_start = time.time()
                 detections = detect_image(model, frame_bgr, conf_threshold, img_size)
+                apply_short_labels(detections, signs_data)
                 inference_elapsed = time.time() - inference_start
                 processed_frames += 1
                 total_detections += len(detections)
@@ -308,6 +413,13 @@ def render_video_tab(
     if not last_seen:
         st.warning("Không phát hiện biển báo trong video hoặc trong số frame đã xử lý.")
         return
+
+    best_item = max(
+        last_seen.values(),
+        key=lambda item: float(item.get("detection", {}).get("confidence", 0.0)),
+    )
+    st.session_state.last_sign_info = best_item.get("sign_info")
+    st.session_state.last_detections = [item.get("detection") for item in last_seen.values()]
 
     with result_placeholder:
         st.subheader("Biển báo đã phát hiện")
@@ -601,35 +713,148 @@ def render_lookup_tab(signs_data: dict, enable_speech: bool, selected_vehicle_ty
 
 def render_chat_tab(signs_data: dict, selected_vehicle_type: str) -> None:
     """Render rule-based chatbot workflow."""
-    st.header("Chatbot hỏi đáp")
-    current_info = st.session_state.last_sign_info
-    if not current_info and signs_data:
-        selected = st.selectbox(
-            "Chưa có biển detect gần nhất. Chọn một biển để hỏi:",
-            options=sorted(signs_data.items(), key=lambda item: int(item[0])),
-            format_func=sign_label,
-            key="chat_select_sign",
-        )
-        current_info = selected[1]
+    st.markdown("<div class='section-title'>Chatbot hỏi đáp</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-subtitle'>Chọn biển báo để AI giải thích ý nghĩa, hành động cần làm, mức phạt tham khảo hoặc tạo ví dụ tình huống.</div>",
+        unsafe_allow_html=True,
+    )
 
-    if current_info:
-        st.caption(
-            f"Đang hỏi về: {current_info.get('class_name', 'Biển báo')} | "
-            f"Phương tiện: {get_vehicle_label(selected_vehicle_type)}"
+    if not signs_data:
+        st.error("Không tải được data/signs.json.")
+        return
+
+    st.session_state.setdefault("selected_sign_code", None)
+    st.session_state.setdefault("selected_sign_name", None)
+    st.session_state.setdefault("selected_sign_group", None)
+    st.session_state.setdefault("current_learning_sign", None)
+    st.session_state.setdefault("chat_vehicle_type", selected_vehicle_type)
+
+    def _group_for_sign(info: dict) -> str:
+        group_text = str(info.get("type", "")).lower()
+        if "cấm" in group_text:
+            return "Biển cấm"
+        if "nguy hiểm" in group_text or "cảnh báo" in group_text:
+            return "Biển nguy hiểm"
+        if "hiệu lệnh" in group_text:
+            return "Biển hiệu lệnh"
+        if "chỉ dẫn" in group_text:
+            return "Biển chỉ dẫn"
+        if "phụ" in group_text:
+            return "Biển phụ"
+        return "Khác"
+
+    def _sign_label(entry: tuple[str, dict]) -> str:
+        _, info = entry
+        code = info.get("code") or f"ID {info.get('class_id', '')}"
+        name = info.get("class_name") or info.get("short_name", "Biển báo")
+        return f"{code} - {name}"
+
+    last_detected = st.session_state.get("last_sign_info")
+    if last_detected and not st.session_state.selected_sign_code:
+        st.session_state.selected_sign_code = str(last_detected.get("class_id"))
+
+    group_options = [
+        "Tất cả",
+        "Biển cấm",
+        "Biển nguy hiểm",
+        "Biển hiệu lệnh",
+        "Biển chỉ dẫn",
+        "Biển phụ",
+        "Khác",
+    ]
+    group_col, sign_col, vehicle_col = st.columns([1, 2.2, 1])
+    with group_col:
+        selected_group = st.selectbox("Nhóm biển báo", options=group_options, key="selected_sign_group")
+
+    sign_items = sorted(signs_data.items(), key=lambda item: int(item[0]))
+    if selected_group != "Tất cả":
+        sign_items = [item for item in sign_items if _group_for_sign(item[1]) == selected_group]
+
+    if not sign_items:
+        st.warning("Không có biển báo phù hợp với nhóm đã chọn.")
+        return
+
+    selected_index = 0
+    if st.session_state.selected_sign_code:
+        for idx, (class_id, _) in enumerate(sign_items):
+            if str(class_id) == str(st.session_state.selected_sign_code):
+                selected_index = idx
+                break
+
+    with sign_col:
+        sign_choice = st.selectbox(
+            "Chọn biển báo",
+            options=sign_items,
+            format_func=_sign_label,
+            index=selected_index,
+            key="chat_sign_select",
         )
 
-    question = st.chat_input("Hỏi về ý nghĩa, hành động cần làm, mức phạt, căn cứ pháp lý hoặc ví dụ...")
-    if question:
-        actual_speed = None
-        if current_info:
-            actual_speed = st.session_state.last_speed_values.get(str(current_info.get("class_id")))
+    with vehicle_col:
+        vehicle_options = ["car", "motorbike", "truck", "bus", "all"]
+        vehicle_index = vehicle_options.index(selected_vehicle_type) if selected_vehicle_type in vehicle_options else 0
+        selected_vehicle = st.selectbox(
+            "Phương tiện",
+            options=vehicle_options,
+            format_func=get_vehicle_label,
+            index=vehicle_index,
+            key="chat_vehicle_type",
+        )
+
+    selected_info = sign_choice[1]
+    st.session_state.current_learning_sign = selected_info
+    st.session_state.selected_sign_code = str(selected_info.get("class_id"))
+    st.session_state.selected_sign_name = selected_info.get("class_name", "Biển báo")
+
+    has_penalty = bool(selected_info.get("penalty_refs")) or selected_info.get("speed_limit_value") is not None
+    penalty_note = "Có mức phạt tham khảo" if has_penalty else "Chưa có mức phạt cụ thể"
+    st.markdown(
+        f"""
+        <div class='section-card'>
+            <div class='panel-title'>Ngữ cảnh câu hỏi</div>
+            <div><strong>Mã biển:</strong> {selected_info.get('code', '')}</div>
+            <div><strong>Tên biển:</strong> {selected_info.get('class_name', 'Biển báo')}</div>
+            <div><strong>Nhóm biển:</strong> {_group_for_sign(selected_info)}</div>
+            <div><strong>Ý nghĩa ngắn:</strong> {selected_info.get('meaning', 'Chưa có dữ liệu ý nghĩa.')}</div>
+            <div><strong>Trạng thái mức phạt:</strong> {penalty_note}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.caption(
+        f"Đang hỏi về: {selected_info.get('code', '')} - {selected_info.get('class_name', 'Biển báo')} | "
+        f"Phương tiện: {get_vehicle_label(selected_vehicle)}"
+    )
+
+    code_label = selected_info.get("code", "")
+    name_label = selected_info.get("class_name", "Biển báo")
+    quick_prompts = [
+        ("Biển này có ý nghĩa gì?", f"Hãy giải thích biển {code_label} - {name_label} cho người mới học lái xe."),
+        ("Gặp biển này phải làm gì?", f"Gặp biển {code_label} - {name_label} thì cần làm gì?"),
+        ("Có bị phạt không?", f"Biển {code_label} - {name_label} có mức phạt tham khảo không?"),
+        ("Cho ví dụ tình huống", f"Cho một ví dụ tình huống khi gặp biển {code_label} - {name_label}."),
+        ("Tạo câu hỏi quiz từ biển này", f"Tạo một câu hỏi quiz ngắn về biển {code_label} - {name_label}."),
+    ]
+    quick_cols = st.columns(5)
+    quick_question = None
+    for col, (label, prompt) in zip(quick_cols, quick_prompts):
+        if col.button(label, key=f"chat_quick_{label}"):
+            quick_question = prompt
+
+    question = st.chat_input(
+        "Hỏi về ý nghĩa, hành động cần làm, mức phạt, căn cứ pháp lý hoặc ví dụ tình huống..."
+    )
+    asked_question = question or quick_question
+    if asked_question:
+        actual_speed = st.session_state.last_speed_values.get(str(selected_info.get("class_id")))
         answer = answer_question(
-            question,
-            current_info,
-            vehicle_type=selected_vehicle_type,
+            asked_question,
+            selected_info,
+            vehicle_type=selected_vehicle,
             actual_speed=actual_speed,
         )
-        st.session_state.chat_history.append(("user", question))
+        st.session_state.chat_history.append(("user", asked_question))
         st.session_state.chat_history.append(("assistant", answer))
 
     for role, message in st.session_state.chat_history[-12:]:

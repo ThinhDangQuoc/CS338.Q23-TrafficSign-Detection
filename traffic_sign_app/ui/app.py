@@ -78,20 +78,20 @@ def _inject_styles() -> None:
             color: #e2e8f0;
         }
         .block-container {
-            padding-top: 1.1rem;
+            padding-top: 0.85rem;
             padding-bottom: 2.2rem;
         }
         .app-hero {
             border: 1px solid rgba(148, 163, 184, 0.18);
             background: linear-gradient(135deg, rgba(10, 18, 32, 0.98), rgba(18, 28, 46, 0.96));
             border-radius: 14px;
-            padding: 1rem 1.35rem;
-            margin-bottom: 0.9rem;
+            padding: 0.85rem 1.2rem;
+            margin-bottom: 0.65rem;
             box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28);
         }
         .app-hero h1 {
             margin: 0 0 0.35rem 0;
-            font-size: 1.85rem;
+            font-size: 1.7rem;
             line-height: 1.22;
             letter-spacing: -0.01em;
             color: #f8fafc;
@@ -100,7 +100,7 @@ def _inject_styles() -> None:
             margin: 0;
             color: #94a3b8;
             max-width: 880px;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
         }
         .legal-note {
             border-left: 3px solid #38bdf8;
@@ -110,6 +110,17 @@ def _inject_styles() -> None:
             border-radius: 8px;
             margin: 0.6rem 0 1rem 0;
             font-size: 0.88rem;
+        }
+        .section-title {
+            color: #e2e8f0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 0.2rem 0;
+        }
+        .section-subtitle {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 0.7rem;
         }
         .sidebar-group {
             border: 1px solid rgba(148, 163, 184, 0.18);
@@ -146,6 +157,13 @@ def _inject_styles() -> None:
             padding: 1rem;
             box-shadow: 0 16px 32px rgba(2, 6, 23, 0.35);
         }
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            border: 1px solid rgba(148, 163, 184, 0.16) !important;
+            background: rgba(9, 16, 30, 0.75) !important;
+            border-radius: 14px !important;
+            padding: 0.85rem !important;
+            box-shadow: 0 16px 32px rgba(2, 6, 23, 0.35) !important;
+        }
         .stepper {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -160,6 +178,30 @@ def _inject_styles() -> None:
             color: #cbd5e1;
             font-size: 0.9rem;
         }
+        .step--done {
+            border-color: rgba(34, 211, 238, 0.6);
+            background: rgba(34, 211, 238, 0.08);
+            color: #e2e8f0;
+        }
+        .step--active {
+            border-color: rgba(99, 102, 241, 0.55);
+            background: rgba(99, 102, 241, 0.12);
+            color: #f8fafc;
+        }
+        .step--warning {
+            border-color: rgba(251, 191, 36, 0.6);
+            background: rgba(251, 191, 36, 0.1);
+            color: #fde68a;
+        }
+        .step--error {
+            border-color: rgba(248, 113, 113, 0.65);
+            background: rgba(248, 113, 113, 0.08);
+            color: #fecaca;
+        }
+        .result-highlight {
+            border: 1px solid rgba(34, 211, 238, 0.55);
+            box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25), 0 12px 30px rgba(15, 23, 42, 0.35);
+        }
         .step strong {
             color: #67e8f9;
             font-weight: 600;
@@ -169,6 +211,11 @@ def _inject_styles() -> None:
             font-weight: 600;
             color: #e2e8f0;
             margin-bottom: 0.45rem;
+        }
+        .panel-subtitle {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 0.6rem;
         }
         .result-table {
             border: 1px solid rgba(148, 163, 184, 0.16);
@@ -195,6 +242,55 @@ def _inject_styles() -> None:
             border-bottom: 2px solid #22d3ee !important;
         }
         div[data-testid="stTabs"] button {
+            font-weight: 600;
+        }
+        div[data-testid="stTabs"] [role="tablist"] {
+            gap: 0.4rem;
+        }
+        div[data-testid="stFileUploader"] {
+            border: 1px dashed rgba(148, 163, 184, 0.35);
+            border-radius: 12px;
+            padding: 0.75rem;
+            background: rgba(8, 15, 28, 0.6);
+        }
+        div[data-testid="stSegmentedControl"] {
+            margin-bottom: 0.6rem;
+        }
+        div[data-testid="stSegmentedControl"] [role="radiogroup"] {
+            gap: 0.5rem;
+        }
+        div[data-testid="stSegmentedControl"] label {
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(15, 23, 42, 0.55);
+            padding: 0.45rem 1.05rem;
+            border-radius: 999px;
+            font-weight: 600;
+            color: #cbd5e1;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        div[data-testid="stSegmentedControl"] label:has(input:checked) {
+            border: 1px solid rgba(34, 211, 238, 0.75);
+            background: rgba(34, 211, 238, 0.14);
+            color: #e6fbff;
+            box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25);
+        }
+        div[data-testid="stSegmentedControl"] label:hover {
+            border-color: rgba(34, 211, 238, 0.5);
+            color: #e6fbff;
+        }
+        .nav-block {
+            margin: 0.2rem 0 0.8rem 0;
+        }
+        .stButton > button {
+            border-radius: 10px;
+        }
+        .stButton > button[kind="primary"] {
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            border: none;
+            color: #0b1220;
             font-weight: 600;
         }
         </style>
@@ -224,27 +320,28 @@ def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> 
                 <div class="sidebar-title">Trạng thái hệ thống</div>
                 <div class="sidebar-item">Model<span>{"Sẵn sàng" if model_ready else "Chưa tải"}</span></div>
                 <div class="sidebar-item">Dữ liệu<span>{len(signs_data)} biển báo</span></div>
-                <div class="sidebar-item">Database<span>SQLite ready</span></div>
+                <div class="sidebar-item">Database<span>Sẵn sàng</span></div>
             </div>
             """,
             unsafe_allow_html=True,
         )
-        st.markdown("<div class='sidebar-group'><div class='sidebar-title'>Thiết lập nhận diện</div>", unsafe_allow_html=True)
-        conf_threshold = st.slider("Ngưỡng tin cậy", 0.05, 0.95, 0.25, 0.05)
-        img_size = st.selectbox("Image size / inference size", options=[416, 640, 960], index=1)
-        if st.session_state.get("selected_vehicle_type") not in VEHICLE_OPTIONS:
-            st.session_state.selected_vehicle_type = "car"
-        selected_vehicle_type = st.selectbox(
-            "Loại phương tiện",
-            options=list(VEHICLE_OPTIONS),
-            format_func=lambda key: VEHICLE_OPTIONS[key],
-            key="selected_vehicle_type",
-        )
-        video_stride = st.number_input("Process every N frames", min_value=1, max_value=30, value=5)
-        save_history = st.toggle("Lưu lịch sử nhận diện", value=True)
-        enable_speech = st.toggle("Đọc cảnh báo bằng giọng nói", value=True)
-        show_performance = st.toggle("Hiển thị FPS / inference time", value=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("<div class='sidebar-title'>Thiết lập nhận diện</div>", unsafe_allow_html=True)
+            conf_threshold = st.slider("Ngưỡng tin cậy", 0.05, 0.95, 0.25, 0.05)
+            if st.session_state.get("selected_vehicle_type") not in VEHICLE_OPTIONS:
+                st.session_state.selected_vehicle_type = "car"
+            selected_vehicle_type = st.selectbox(
+                "Loại phương tiện",
+                options=list(VEHICLE_OPTIONS),
+                format_func=lambda key: VEHICLE_OPTIONS[key],
+                key="selected_vehicle_type",
+            )
+            save_history = st.toggle("Lưu lịch sử nhận diện", value=True)
+            enable_speech = st.toggle("Đọc cảnh báo bằng giọng nói", value=True)
+            with st.expander("Cài đặt nâng cao", expanded=False):
+                img_size = st.selectbox("Kích thước xử lý ảnh", options=[416, 640, 960], index=1)
+                video_stride = st.number_input("Xử lý mỗi N khung hình", min_value=1, max_value=30, value=5)
+                show_performance = st.toggle("Hiển thị tốc độ xử lý", value=True)
 
     return (
         conf_threshold,
@@ -302,61 +399,81 @@ def main() -> None:
         model is not None,
     )
 
-    tab_image, tab_video, tab_webcam, tab_lookup, tab_chat, tab_quiz, tab_history, tab_eval = st.tabs(
-        [
-            "Ảnh",
-            "Video",
-            "Webcam",
-            "Tra cứu",
-            "Chatbot",
-            "Quiz",
-            "Lịch sử",
-            "Đánh giá model",
-        ]
+    st.markdown("<div class='nav-block'></div>", unsafe_allow_html=True)
+    main_section = st.segmented_control(
+        "Nhóm chức năng",
+        ["Nhận diện", "Học biển báo", "Theo dõi"],
+        default=st.session_state.get("main_section", "Nhận diện"),
+        key="main_section",
+        label_visibility="collapsed",
     )
 
-    with tab_image:
-        render_image_tab(
-            model,
-            signs_data,
-            conf_threshold,
-            img_size,
-            enable_speech,
-            save_history,
-            show_performance,
-            selected_vehicle_type,
+    if main_section == "Nhận diện":
+        sub_tab = st.segmented_control(
+            "Chọn chế độ nhận diện",
+            ["Ảnh", "Video", "Webcam"],
+            default=st.session_state.get("detect_tab", "Ảnh"),
+            key="detect_tab",
+            label_visibility="collapsed",
         )
-    with tab_video:
-        render_video_tab(
-            model,
-            signs_data,
-            conf_threshold,
-            img_size,
-            enable_speech,
-            save_history,
-            show_performance,
-            video_stride,
-            selected_vehicle_type,
+        if sub_tab == "Ảnh":
+            render_image_tab(
+                model,
+                signs_data,
+                conf_threshold,
+                img_size,
+                enable_speech,
+                save_history,
+                show_performance,
+                selected_vehicle_type,
+            )
+        elif sub_tab == "Video":
+            render_video_tab(
+                model,
+                signs_data,
+                conf_threshold,
+                img_size,
+                enable_speech,
+                save_history,
+                show_performance,
+                video_stride,
+                selected_vehicle_type,
+            )
+        else:
+            render_webcam_tab(
+                model,
+                signs_data,
+                conf_threshold,
+                img_size,
+                enable_speech,
+                save_history,
+                show_performance,
+                video_stride,
+                selected_vehicle_type,
+            )
+    elif main_section == "Học biển báo":
+        sub_tab = st.segmented_control(
+            "Chọn chế độ học",
+            ["Tra cứu", "Hỏi AI", "Luyện quiz"],
+            default=st.session_state.get("learn_tab", "Tra cứu"),
+            key="learn_tab",
+            label_visibility="collapsed",
         )
-    with tab_webcam:
-        render_webcam_tab(
-            model,
-            signs_data,
-            conf_threshold,
-            img_size,
-            enable_speech,
-            save_history,
-            show_performance,
-            video_stride,
-            selected_vehicle_type,
+        if sub_tab == "Tra cứu":
+            render_lookup_tab(signs_data, enable_speech, selected_vehicle_type)
+        elif sub_tab == "Hỏi AI":
+            render_chat_tab(signs_data, selected_vehicle_type)
+        else:
+            render_quiz_tab(signs_data, scenarios)
+    else:
+        sub_tab = st.segmented_control(
+            "Chọn mục theo dõi",
+            ["Lịch sử", "Đánh giá model"],
+            default=st.session_state.get("track_tab", "Lịch sử"),
+            key="track_tab",
+            label_visibility="collapsed",
         )
-    with tab_lookup:
-        render_lookup_tab(signs_data, enable_speech, selected_vehicle_type)
-    with tab_chat:
-        render_chat_tab(signs_data, selected_vehicle_type)
-    with tab_quiz:
-        render_quiz_tab(signs_data, scenarios)
-    with tab_history:
-        render_history_tab()
-    with tab_eval:
-        render_model_evaluation_tab(model, classes)
+        if sub_tab == "Lịch sử":
+            render_history_tab()
+        else:
+            render_model_evaluation_tab(model, classes)
