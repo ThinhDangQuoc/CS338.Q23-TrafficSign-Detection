@@ -32,11 +32,16 @@ def save_detection_with_cooldown(
     seconds: int = 5,
     enabled: bool = True,
 ) -> None:
-    """Save a detection while avoiding repeated rows for the same class/source."""
+    """Save a detection while avoiding repeated rows for the same class/source or track_id."""
     if not enabled:
         return
 
-    key = f"{source}:{detection.get('class_id')}"
+    track_id = detection.get("track_id")
+    if track_id is not None:
+        key = f"{source}:track:{track_id}"
+    else:
+        key = f"{source}:{detection.get('class_id')}"
+
     now = time.time()
     last_saved = st.session_state.saved_recently.get(key, 0)
     if now - last_saved < seconds:

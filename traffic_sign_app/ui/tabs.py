@@ -362,7 +362,7 @@ def render_video_tab(
         if frame_index % int(video_stride) == 0:
             try:
                 inference_start = time.time()
-                detections = detect_image(model, frame_bgr, conf_threshold, img_size)
+                detections = detect_image(model, frame_bgr, conf_threshold, img_size, track=True)
                 apply_short_labels(detections, signs_data)
                 inference_elapsed = time.time() - inference_start
                 processed_frames += 1
@@ -390,7 +390,7 @@ def render_video_tab(
                         seconds=8,
                         enabled=save_history,
                     )
-                    if enable_speech and should_speak(detection["class_id"], cooldown_seconds=8):
+                    if enable_speech and should_speak(detection["class_id"], cooldown_seconds=8, track_id=detection.get("track_id")):
                         last_audio_path = text_to_speech(generate_speech_text(sign_info), AUDIO_DIR)
             except Exception as exc:
                 st.warning(f"Bỏ qua frame {frame_index} do lỗi inference: {exc}")
@@ -588,7 +588,7 @@ def render_webcam_tab(
             if should_process:
                 try:
                     started_at = time.time()
-                    detections = detect_image(model, frame_bgr, conf_threshold, img_size)
+                    detections = detect_image(model, frame_bgr, conf_threshold, img_size, track=True)
                     elapsed = time.time() - started_at
                     annotated = draw_detections(frame_bgr, detections, signs_data)
                     sign_infos = [get_sign_info(item["class_id"], signs_data) for item in detections]
@@ -597,8 +597,20 @@ def render_webcam_tab(
                     if save_history:
                         for detection, sign_info in zip(detections, sign_infos):
                             class_id = int(detection.get("class_id", -1))
-                            last_saved = self.history_cooldown.get(class_id, 0)
-                            if now - last_saved >= 3:
+                            track_id = detection.get("track_id")
+                            
+                            should_save = False
+                            if track_id is not None:
+                                key = f"track_{track_id}"
+                                if key not in self.history_cooldown:
+                                    should_save = True
+                            else:
+                                key = f"class_{class_id}"
+                                last_saved = self.history_cooldown.get(key, 0)
+                                if now - last_saved >= 3:
+                                    should_save = True
+
+                            if should_save:
                                 save_detection(
                                     class_id,
                                     sign_info.get("class_name", detection.get("class_name", "Unknown")),
@@ -607,7 +619,7 @@ def render_webcam_tab(
                                     "webcam",
                                     DB_PATH,
                                 )
-                                self.history_cooldown[class_id] = now
+                                self.history_cooldown[key] = now
 
                     with self.lock:
                         self.processed_frames += 1
@@ -712,18 +724,28 @@ def render_webcam_tab(
                     if latest_signs:
                         top_sign = latest_signs[0]
                         top_det = latest_detections[0] if latest_detections else {}
+                        top_track_id = top_det.get("track_id")
                         conf = float(top_det.get("confidence", 0.0))
                         st.session_state.last_sign_info = top_sign
 
-                        # Update in-tab track history (dedupe by class_id or time > 3s)
+                        # Update in-tab track history (dedupe by track_id, or class_id if no track_id)
                         history: list[dict] = st.session_state.webcam_track_history
                         now_ts = time.time()
                         last_ts = st.session_state.get("webcam_last_append_ts", 0)
                         
-                        if not history or history[-1].get("class_id") != top_sign.get("class_id") or (now_ts - last_ts > 3):
+                        should_append = False
+                        if top_track_id is not None:
+                            if not history or history[-1].get("track_id") != top_track_id:
+                                should_append = True
+                        else:
+                            if not history or history[-1].get("class_id") != top_sign.get("class_id") or (now_ts - last_ts > 3):
+                                should_append = True
+
+                        if should_append:
                             st.session_state.webcam_last_append_ts = now_ts
                             history.append({
                                 "class_id": top_sign.get("class_id"),
+                                "track_id": top_track_id,
                                 "name": top_sign.get("short_name") or top_sign.get("class_name", "?"),
                                 "conf": conf,
                                 "time": time.strftime("%H:%M:%S"),
@@ -736,10 +758,11 @@ def render_webcam_tab(
                         # Display up to 3 most recent signs
                         for item in reversed(history[-3:]):
                             info = item.get("sign_info", {})
+                            track_badge = f" &nbsp;`ID:{item['track_id']}`" if item.get("track_id") is not None else ""
                             with st.container(border=True):
                                 st.markdown(
                                     f"**{info.get('short_name') or info.get('class_name', 'Biển báo')}**"
-                                    f"&nbsp;&nbsp;`{item['conf']:.2f}` &nbsp;&nbsp; *(Lúc {item['time']})*"
+                                    f"{track_badge}&nbsp;&nbsp;`{item['conf']:.2f}` &nbsp;&nbsp; *(Lúc {item['time']})*"
                                 )
                                 meaning = info.get('meaning', '—')
                                 st.caption(meaning if len(meaning) <= 120 else meaning[:117] + "...")
@@ -750,11 +773,23 @@ def render_webcam_tab(
                         if tts_on:
                             latest_item = history[-1]
                             latest_id = latest_item["class_id"]
-                            # Only trigger if it's a NEW sign ID
-                            if latest_id != st.session_state.get("webcam_last_tts_id"):
+                            latest_track_id = latest_item.get("track_id")
+                            
+                            should_tts = False
+                            if latest_track_id is not None:
+                                if latest_track_id != st.session_state.get("webcam_last_tts_track_id"):
+                                    should_tts = True
+                            else:
+                                if latest_id != st.session_state.get("webcam_last_tts_id"):
+                                    should_tts = True
+
+                            if should_tts:
                                 audio_path = text_to_speech(generate_speech_text(latest_item.get("sign_info", {})), AUDIO_DIR)
                                 if audio_path:
-                                    st.session_state.webcam_last_tts_id = latest_id
+                                    if latest_track_id is not None:
+                                        st.session_state.webcam_last_tts_track_id = latest_track_id
+                                    else:
+                                        st.session_state.webcam_last_tts_id = latest_id
                                     with open(audio_path, "rb") as f:
                                         b64 = base64.b64encode(f.read()).decode("utf-8")
                                     st.session_state.webcam_tts_b64 = b64
@@ -1076,231 +1111,275 @@ def render_quiz_tab(signs_data: dict, scenarios: dict) -> None:
     """Render quiz tab with static scenarios and AI-generated quiz modes."""
     from traffic_sign_app.services.chatbot import generate_quiz_with_llm
     import os
+    import random
+    import time
 
-    st.markdown("<div class='section-title'>Quiz & Luyện tập</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Quiz & Luyện tập trắc nghiệm</div>", unsafe_allow_html=True)
     st.markdown(
-        "<div class='section-subtitle'>Luyện thi luật giao thông với câu hỏi tĩnh hoặc câu hỏi AI tạo ra theo yêu cầu.</div>",
+        "<div class='section-subtitle'>Luyện thi luật giao thông với chế độ Luyện tập từng câu hoặc làm đề thi thử 10 câu ngẫu nhiên.</div>",
         unsafe_allow_html=True,
     )
 
-    # ── Session state ────────────────────────────────────────────────────────
-    st.session_state.setdefault("quiz_mode", "static")
+    if not scenarios:
+        st.error("Không tìm thấy ngân hàng câu hỏi (scenarios.json).")
+        return
+
+    # ── Initialize session states ───────────────────────────────────────────
     st.session_state.setdefault("quiz_score", {"correct": 0, "total": 0})
-    st.session_state.setdefault("quiz_llm_result", None)
-    st.session_state.setdefault("quiz_llm_checked", False)
-    st.session_state.setdefault("quiz_llm_choice", None)
-    st.session_state.setdefault("quiz_static_checked", False)
+    
+    # Practice states
+    st.session_state.setdefault("practice_question", None)
+    st.session_state.setdefault("practice_question_id", 0)
+    st.session_state.setdefault("practice_checked", False)
+    st.session_state.setdefault("practice_choice", None)
+    st.session_state.setdefault("practice_source", "static")
+    
+    # Exam states
+    st.session_state.setdefault("exam_active", False)
+    st.session_state.setdefault("exam_questions", [])
+    st.session_state.setdefault("exam_index", 0)
+    st.session_state.setdefault("exam_answers", {})
+    st.session_state.setdefault("exam_finished", False)
+    st.session_state.setdefault("exam_score", 0)
 
-    has_api = bool(os.environ.get("OPENAI_API_KEY"))
+    # ── Top Bar Options ─────────────────────────────────────────────────────
+    tab_practice, tab_exam = st.tabs(["🟢 Luyện tập từng câu", "🏆 Thi thử (Đề 10 câu)"])
 
-    # ── Mode selector ────────────────────────────────────────────────────────
-    mode_col, score_col = st.columns([3, 1])
-    with mode_col:
-        mode_options = ["📋 Câu hỏi tĩnh (scenarios.json)", "🤖 AI tạo câu hỏi (GPT-4o-mini)"]
-        selected_mode_label = st.radio(
-            "Chế độ luyện tập",
-            mode_options,
-            horizontal=True,
-            key="quiz_mode_radio",
-        )
-        st.session_state.quiz_mode = "llm" if "AI" in selected_mode_label else "static"
-    with score_col:
-        sc = st.session_state.quiz_score
-        total = sc["total"]
-        pct = int(sc["correct"] / total * 100) if total else 0
-        st.metric("🏆 Điểm", f"{sc['correct']}/{total}", f"{pct}%")
-        if st.button("↺ Reset điểm", key="quiz_reset_score"):
-            st.session_state.quiz_score = {"correct": 0, "total": 0}
+    # =========================================================================
+    # 1. PRACTICE MODE
+    # =========================================================================
+    with tab_practice:
+        src_col, reset_col = st.columns([3, 1])
+        with src_col:
+            has_api = bool(os.environ.get("OPENAI_API_KEY"))
+            source_options = ["📄 Câu hỏi từ ngân hàng offline", "🤖 Câu hỏi sinh bởi AI (GPT-4o-mini)"]
+            
+            # Find default index based on state
+            def_idx = 0 if st.session_state.practice_source == "static" else 1
+            selected_source_label = st.radio(
+                "Nguồn câu hỏi:",
+                source_options,
+                horizontal=True,
+                index=def_idx,
+                key="practice_source_selector",
+            )
+            new_source = "ai" if "AI" in selected_source_label else "static"
+            if new_source != st.session_state.practice_source:
+                st.session_state.practice_source = new_source
+                st.session_state.practice_question = None
+                st.session_state.practice_checked = False
+                st.session_state.practice_choice = None
+                st.rerun()
+
+        if st.session_state.practice_source == "ai" and not has_api:
+            st.warning("⚠️ Chức năng tạo câu hỏi AI yêu cầu `OPENAI_API_KEY` trong file `.env`.")
+            st.info("Hệ thống tự động sử dụng ngân hàng câu hỏi offline thay thế.")
+            st.session_state.practice_source = "static"
             st.rerun()
 
-    st.divider()
-
-    # ════════════════════════════════════════════════════════════════════════
-    # MODE 1 — STATIC SCENARIOS
-    # ════════════════════════════════════════════════════════════════════════
-    if st.session_state.quiz_mode == "static":
-        if not scenarios:
-            st.warning("Chưa có dữ liệu tình huống trong data/scenarios.json.")
-            return
-
-        scenario_items = sorted(scenarios.items(), key=lambda item: int(item[0]))
-        selected = st.selectbox(
-            "Chọn tình huống",
-            scenario_items,
-            format_func=lambda item: (
-                f"{item[0]} – {signs_data.get(item[0], {}).get('short_name', 'Tình huống')}"
-            ),
-            key="quiz_static_select",
-        )
-        class_id, scenario = selected
-
-        with st.container(border=True):
-            st.info(scenario.get("scenario", ""))
-            st.markdown(f"**❓ Câu hỏi:** {scenario.get('question', '')}")
-            choice = st.radio(
-                "Chọn đáp án:",
-                scenario.get("options", []),
-                key=f"quiz_static_{class_id}",
-                index=None,
-            )
-            btn_check = st.button("✅ Kiểm tra đáp án", key="quiz_static_check", type="primary")
-            if btn_check and choice:
-                st.session_state.quiz_static_checked = True
-                correct = scenario.get("answer")
-                is_ok = choice == correct
-                st.session_state.quiz_score["total"] += 1
-                if is_ok:
-                    st.session_state.quiz_score["correct"] += 1
-                    st.success("🎉 Đúng rồi!")
-                else:
-                    st.error(f"❌ Chưa đúng. Đáp án đúng: **{correct}**")
-                st.info(f"💡 {scenario.get('explanation', '')}")
-            elif btn_check and not choice:
-                st.warning("Hãy chọn một đáp án trước khi kiểm tra.")
-
-    # ════════════════════════════════════════════════════════════════════════
-    # MODE 2 — AI-GENERATED QUIZ
-    # ════════════════════════════════════════════════════════════════════════
-    else:
-        if not has_api:
-            st.warning(
-                "Chức năng này cần **OpenAI API Key**. "
-                "Hãy thêm `OPENAI_API_KEY=...` vào file `.env` ở thư mục gốc dự án.",
-                icon="🔑",
-            )
-            return
-
-        # ── Controls ─────────────────────────────────────────────────────
-        ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([2, 1, 1])
-        with ctrl_col1:
-            sign_items = sorted(signs_data.items(), key=lambda item: int(item[0]))
-
-            def _sign_label(entry: tuple) -> str:
-                _, info = entry
-                code = info.get("code") or f"ID {info.get('class_id', '')}"
-                name = info.get("class_name") or info.get("short_name", "Biển báo")
-                return f"{code} – {name}"
-
-            # Pre-select last detected sign if available
-            last_sign = st.session_state.get("last_sign_info")
-            default_idx = 0
-            if last_sign:
-                for i, (cid, _) in enumerate(sign_items):
-                    if str(cid) == str(last_sign.get("class_id")):
-                        default_idx = i
-                        break
-
-            sign_choice = st.selectbox(
-                "Chọn biển báo để tạo quiz",
-                sign_items,
-                format_func=_sign_label,
-                index=default_idx,
-                key="quiz_llm_sign_select",
-            )
-
-        with ctrl_col2:
-            difficulty = st.selectbox(
-                "Độ khó",
-                ["easy", "medium", "hard"],
-                index=1,
-                format_func=lambda x: {"easy": "🟢 Dễ", "medium": "🟡 Trung bình", "hard": "🔴 Khó"}[x],
-                key="quiz_llm_difficulty",
-            )
-
-        with ctrl_col3:
-            st.markdown("<br>", unsafe_allow_html=True)  # vertical align
-            gen_btn = st.button("⚡ Tạo câu hỏi AI", key="quiz_llm_generate", type="primary")
-
-        selected_sign_info = sign_choice[1]
-        sign_label_str = _sign_label(sign_choice)
-
-        # ── Generate via LLM ─────────────────────────────────────────────
-        if gen_btn:
-            st.session_state.quiz_llm_checked = False
-            st.session_state.quiz_llm_choice = None
-            st.session_state.quiz_llm_result = None
-            with st.spinner(f"🤖 GPT-4o-mini đang tạo câu hỏi về **{sign_label_str}**..."):
-                result = generate_quiz_with_llm(selected_sign_info, difficulty=difficulty)
-            if result:
-                st.session_state.quiz_llm_result = result
-                st.toast("Câu hỏi đã được tạo!", icon="✅")
+        # Load practice question if None
+        if st.session_state.practice_question is None:
+            if st.session_state.practice_source == "static":
+                sc_id = random.choice(list(scenarios.keys()))
+                sc = scenarios[sc_id]
+                st.session_state.practice_question = {
+                    "id": sc_id,
+                    "question": f"**Tình huống:** {sc.get('scenario', '')}\n\n**Câu hỏi:** {sc.get('question', '')}",
+                    "options": list(sc.get("options", [])),
+                    "answer": sc.get("answer"),
+                    "explanation": sc.get("explanation"),
+                }
+                st.session_state.practice_question_id = random.randint(1000, 9999)
             else:
-                st.error(
-                    "Không thể tạo câu hỏi từ AI lúc này (lỗi API hoặc mất kết nối). "
-                    "Thử lại sau hoặc dùng chế độ câu hỏi tĩnh."
-                )
+                with st.spinner("AI đang tạo câu hỏi ngẫu nhiên..."):
+                    random_sign_id = random.choice(list(signs_data.keys()))
+                    random_sign = signs_data[random_sign_id]
+                    ai_q = generate_quiz_with_llm(random_sign, difficulty="medium")
+                    if ai_q:
+                        st.session_state.practice_question = {
+                            "id": f"ai_{random_sign_id}",
+                            "question": ai_q["question"],
+                            "options": ai_q["options"],
+                            "answer": ai_q["answer"],
+                            "explanation": ai_q["explanation"],
+                        }
+                        st.session_state.practice_question_id = random.randint(1000, 9999)
+                    else:
+                        st.error("Không tạo được câu hỏi từ AI. Chuyển về ngân hàng offline.")
+                        st.session_state.practice_source = "static"
+                        st.rerun()
 
-        # ── Render quiz card ─────────────────────────────────────────────
-        quiz = st.session_state.get("quiz_llm_result")
-        if quiz:
-            diff_badge = {"easy": "🟢 Dễ", "medium": "🟡 Trung bình", "hard": "🔴 Khó"}.get(
-                difficulty, difficulty
-            )
-            st.markdown(
-                f"<div style='font-size:0.8rem;opacity:.6;margin-bottom:.3rem;'>"
-                f"🤖 AI tạo · {sign_label_str} · {diff_badge}</div>",
-                unsafe_allow_html=True,
-            )
+        # Render Practice Question
+        q = st.session_state.practice_question
+        if q:
             with st.container(border=True):
-                st.markdown(f"**❓ {quiz['question']}**")
-                st.markdown("")
-
+                st.markdown(q["question"])
+                
                 choice = st.radio(
-                    "Chọn đáp án:",
-                    quiz["options"],
-                    key="quiz_llm_radio",
+                    "Chọn đáp án đúng:",
+                    q["options"],
+                    key=f"practice_radio_{st.session_state.practice_question_id}",
                     index=None,
                 )
-                st.session_state.quiz_llm_choice = choice
+                st.session_state.practice_choice = choice
 
-                btn_col1, btn_col2 = st.columns([1, 1])
-                check_btn = btn_col1.button("✅ Kiểm tra", key="quiz_llm_check", type="primary")
-                next_btn  = btn_col2.button("⏭️ Câu tiếp theo", key="quiz_llm_next")
+                col_btn1, col_btn2 = st.columns([1, 1])
+                check_pressed = col_btn1.button("✅ Kiểm tra đáp án", use_container_width=True, type="primary", key="btn_practice_check")
+                next_pressed = col_btn2.button("⏭️ Câu tiếp theo", use_container_width=True, key="btn_practice_next")
 
-                if check_btn:
+                if check_pressed:
                     if not choice:
-                        st.warning("Hãy chọn một đáp án trước!")
+                        st.warning("Vui lòng chọn một đáp án trước.")
                     else:
-                        st.session_state.quiz_llm_checked = True
-                        correct = quiz["answer"]
-                        is_ok = choice.strip() == correct.strip() or correct.strip() in choice
-                        st.session_state.quiz_score["total"] += 1
-                        if is_ok:
-                            st.session_state.quiz_score["correct"] += 1
-                            st.success("🎉 Đúng rồi!")
-                        else:
-                            st.error(f"❌ Chưa đúng. Đáp án đúng: **{correct}**")
-                        st.info(f"💡 {quiz['explanation']}")
+                        st.session_state.practice_checked = True
 
-                elif st.session_state.quiz_llm_checked and choice:
-                    # Re-render result after page reflow
-                    correct = quiz["answer"]
-                    is_ok = choice.strip() == correct.strip() or correct.strip() in choice
-                    if is_ok:
-                        st.success("🎉 Đúng rồi!")
-                    else:
-                        st.error(f"❌ Chưa đúng. Đáp án đúng: **{correct}**")
-                    st.info(f"💡 {quiz['explanation']}")
-
-                if next_btn:
-                    # Auto-generate next question for same sign
-                    st.session_state.quiz_llm_checked = False
-                    st.session_state.quiz_llm_choice = None
-                    st.session_state.quiz_llm_result = None
-                    with st.spinner("Đang tạo câu hỏi tiếp theo..."):
-                        result = generate_quiz_with_llm(selected_sign_info, difficulty=difficulty)
-                    if result:
-                        st.session_state.quiz_llm_result = result
-                    else:
-                        st.error("Không thể tạo câu hỏi tiếp theo. Thử lại sau.")
+                if next_pressed:
+                    st.session_state.practice_question = None
+                    st.session_state.practice_checked = False
+                    st.session_state.practice_choice = None
                     st.rerun()
-        else:
+
+                if st.session_state.practice_checked and choice:
+                    correct = q["answer"]
+                    is_correct = choice.strip() == correct.strip() or correct.strip() in choice
+                    if is_correct:
+                        st.success("🎉 **Chính xác!** Bạn đã trả lời đúng.")
+                    else:
+                        st.error(f"❌ **Chưa chính xác.** Đáp án đúng là: **{correct}**")
+                    st.info(f"💡 **Giải thích:** {q['explanation']}")
+
+    # =========================================================================
+    # 2. EXAM MODE (10 QUESTIONS)
+    # =========================================================================
+    with tab_exam:
+        if not st.session_state.exam_active:
+            st.markdown("### 🏆 Đề Thi Thử Luật Giao Thông")
             st.markdown(
-                "<div style='text-align:center;padding:2rem;opacity:.5;'>"
-                "Chọn biển báo và bấm <strong>⚡ Tạo câu hỏi AI</strong> để bắt đầu luyện tập."
-                "</div>",
-                unsafe_allow_html=True,
+                "Hệ thống sẽ lấy ngẫu nhiên **10 câu hỏi** từ ngân hàng tình huống chuẩn. "
+                "Bạn có thể làm bài, duyệt qua lại để sửa đáp án và nộp bài khi đã hoàn thành."
             )
+            
+            if st.button("🚀 Bắt đầu thi thử", type="primary", use_container_width=True, key="btn_start_exam"):
+                all_ids = list(scenarios.keys())
+                selected_ids = random.sample(all_ids, min(10, len(all_ids)))
+                exam_qs = []
+                for sc_id in selected_ids:
+                    sc = scenarios[sc_id]
+                    exam_qs.append({
+                        "id": sc_id,
+                        "question": f"**Tình huống:** {sc.get('scenario', '')}\n\n**Câu hỏi:** {sc.get('question', '')}",
+                        "options": list(sc.get("options", [])),
+                        "answer": sc.get("answer"),
+                        "explanation": sc.get("explanation"),
+                    })
+                st.session_state.exam_questions = exam_qs
+                st.session_state.exam_index = 0
+                st.session_state.exam_answers = {}
+                st.session_state.exam_finished = False
+                st.session_state.exam_active = True
+                st.rerun()
+        else:
+            exam_qs = st.session_state.exam_questions
+            idx = st.session_state.exam_index
+            
+            if not st.session_state.exam_finished:
+                # Progress
+                st.progress((idx + 1) / 10)
+                st.markdown(f"**Câu hỏi {idx + 1} / 10**")
+
+                q = exam_qs[idx]
+                with st.container(border=True):
+                    st.markdown(q["question"])
+                    
+                    options = q["options"]
+                    prev_selection = st.session_state.exam_answers.get(idx)
+                    default_idx = None
+                    if prev_selection in options:
+                        default_idx = options.index(prev_selection)
+                    
+                    choice = st.radio(
+                        "Chọn đáp án của bạn:",
+                        options,
+                        index=default_idx,
+                        key=f"exam_radio_{idx}",
+                    )
+                    
+                    if choice:
+                        st.session_state.exam_answers[idx] = choice
+
+                # Nav buttons
+                nav_col1, nav_col2, nav_col3 = st.columns([1, 1, 1.2])
+                has_prev = idx > 0
+                if nav_col1.button("◀ Câu trước", disabled=not has_prev, use_container_width=True, key="btn_exam_prev"):
+                    st.session_state.exam_index -= 1
+                    st.rerun()
+                
+                has_next = idx < 9
+                if nav_col2.button("Câu sau ▶", disabled=not has_next, use_container_width=True, key="btn_exam_next"):
+                    st.session_state.exam_index += 1
+                    st.rerun()
+                
+                if nav_col3.button("📤 Nộp bài thi", type="primary", use_container_width=True, key="btn_exam_submit"):
+                    score = 0
+                    for i, eq in enumerate(exam_qs):
+                        user_ans = st.session_state.exam_answers.get(i)
+                        correct_ans = eq.get("answer")
+                        user_ans_str = str(user_ans).strip() if user_ans else ""
+                        correct_ans_str = str(correct_ans).strip() if correct_ans else ""
+                        if user_ans_str and correct_ans_str and (user_ans_str == correct_ans_str or correct_ans_str in user_ans_str):
+                            score += 1
+                    st.session_state.exam_score = score
+                    st.session_state.exam_finished = True
+                    st.rerun()
+            else:
+                # Report Card
+                score = st.session_state.exam_score
+                pct = int(score / 10 * 100)
+                
+                st.markdown("### 📊 Kết Quả Bài Thi Thử")
+                score_col, status_col = st.columns([1, 2])
+                score_col.metric("Điểm số", f"{score} / 10", f"{pct}%")
+                
+                if score >= 8:
+                    status_col.success("🎉 **ĐẠT!** Bạn có kiến thức rất tốt về biển báo giao thông.")
+                else:
+                    status_col.error("❌ **CHƯA ĐẠT.** Bạn cần ôn tập thêm. Điểm đỗ tối thiểu là 8/10.")
+
+                act_col1, act_col2 = st.columns(2)
+                if act_col1.button("↺ Thi lại đề khác", type="primary", use_container_width=True, key="btn_exam_retry"):
+                    st.session_state.exam_active = False
+                    st.session_state.exam_finished = False
+                    st.rerun()
+                if act_col2.button("🗑️ Thoát thi thử", use_container_width=True, key="btn_exam_cancel"):
+                    st.session_state.exam_active = False
+                    st.session_state.exam_finished = False
+                    st.rerun()
+
+                st.divider()
+                st.markdown("#### 🔍 Xem lại bài làm chi tiết")
+
+                for i, eq in enumerate(exam_qs):
+                    user_ans = st.session_state.exam_answers.get(i, "Không trả lời")
+                    correct_ans = eq.get("answer")
+                    user_ans_str = str(user_ans).strip() if user_ans else ""
+                    correct_ans_str = str(correct_ans).strip() if correct_ans else ""
+                    is_correct = False
+                    if user_ans_str and correct_ans_str and (user_ans_str == correct_ans_str or correct_ans_str in user_ans_str):
+                        is_correct = True
+                    
+                    card_title = f"Câu hỏi {i + 1}"
+                    
+                    with st.expander(card_title, expanded=not is_correct):
+                        st.markdown(eq["question"])
+                        st.markdown(f"**Đáp án của bạn:** {user_ans}")
+                        st.markdown(f"**Đáp án đúng:** {correct_ans}")
+                        
+                        if is_correct:
+                            st.success("Trả lời chính xác!")
+                        else:
+                            st.error("Trả lời sai.")
+                        
+                        st.info(f"💡 **Giải thích:** {eq['explanation']}")
 
 
 

@@ -13,12 +13,15 @@ from traffic_sign_app.config import AUDIO_DIR
 _LAST_SPOKEN_AT: dict[int, float] = {}
 
 
-def should_speak(class_id, cooldown_seconds: int = 8) -> bool:
-    """Return True when a class can be spoken again after cooldown."""
-    try:
-        key = int(class_id)
-    except (TypeError, ValueError):
-        key = -1
+def should_speak(class_id, cooldown_seconds: int = 8, track_id: int | None = None) -> bool:
+    """Return True when a class (or track_id) can be spoken again after cooldown."""
+    if track_id is not None:
+        key = f"track_{track_id}"
+    else:
+        try:
+            key = int(class_id)
+        except (TypeError, ValueError):
+            key = -1
 
     now = time.time()
     previous = _LAST_SPOKEN_AT.get(key, 0)

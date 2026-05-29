@@ -102,6 +102,12 @@ def answer_question(
         return "Bạn hãy nhận diện hoặc chọn một biển báo trước, rồi mình sẽ giải thích theo biển đó."
 
     api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        try:
+            import streamlit as st
+            api_key = st.secrets.get("OPENAI_API_KEY") or st.secrets.get("openai", {}).get("api_key")
+        except Exception:
+            pass
     
     # If no API key is set, immediately use rule-based fallback
     if not api_key:
@@ -130,21 +136,21 @@ def answer_question(
         penalty_text = format_penalty_explanation(penalty_records, vehicle_type)
 
     system_prompt = (
-        "Bạn là một chuyên gia hỗ trợ về luật giao thông đường bộ Việt Nam và hệ thống biển báo.\n"
-        "Hãy trả lời câu hỏi của người dùng một cách thân thiện, chính xác dựa trên ngữ cảnh biển báo được cung cấp dưới đây.\n\n"
-        f"--- NGỮ CẢNH BIỂN BÁO ĐANG CHỌN ---\n"
+        "Bạn là một chuyên gia tư vấn luật giao thông đường bộ Việt Nam và hệ thống biển báo đường bộ quy chuẩn QCVN 41:2019/BGTVT.\n"
+        "Hãy giải thích câu hỏi của học viên một cách chi tiết, dễ hiểu, thân thiện dựa trên ngữ cảnh biển báo và luật giao thông được cung cấp dưới đây.\n\n"
+        f"--- NGỮ CẢNH BIỂN BÁO ĐANG HỌC ---\n"
         f"Tên biển báo: {short_name}\n"
         f"Ý nghĩa: {meaning}\n"
         f"Hành động người lái cần thực hiện: {action}\n"
         f"Lỗi vi phạm thường gặp: {violation}\n"
-        f"Cảnh báo: {warning}\n"
-        f"Ví dụ thực tế: {example}\n"
-        f"Mức phạt vi phạm (cho loại phương tiện {vehicle_type or 'ô tô'}): {penalty_text}\n"
+        f"Cảnh báo an toàn: {warning}\n"
+        f"Ví dụ/Tình huống minh họa: {example}\n"
+        f"Chi tiết mức xử phạt vi phạm hành chính (áp dụng Nghị định 168/2024/NĐ-CP mới nhất có hiệu lực từ 01/01/2025 cho phương tiện {vehicle_type or 'ô tô'}): \n{penalty_text}\n"
         "------------------------------------\n\n"
         "QUY TẮC TRẢ LỜI:\n"
-        "1. Trả lời bằng tiếng Việt lịch sự, dễ hiểu và dùng markdown để làm nổi bật các ý chính.\n"
-        "2. Hãy bám sát vào ngữ cảnh được cung cấp ở trên để giải thích chính xác theo luật Việt Nam.\n"
-        "3. Nếu người dùng hỏi những thông tin ngoài lề biển báo này, hãy lịch sự trả lời và liên hệ khéo léo lại với luật giao thông hoặc biển báo hiện tại."
+        "1. Trả lời bằng tiếng Việt lịch sự, khoa học. Dùng markdown (in đậm, danh sách) để cấu trúc rõ ràng câu trả lời.\n"
+        "2. Bám sát ngữ cảnh biển báo để giải thích chính xác theo luật Việt Nam. Khi nói về mức phạt hoặc căn cứ pháp lý, hãy sử dụng chính xác thông tin trong ngữ cảnh được cung cấp.\n"
+        "3. Nếu học viên hỏi ngoài lề biển báo hiện tại, hãy trả lời ngắn gọn rồi khéo léo định hướng họ quay lại tìm hiểu biển báo đang học."
     )
 
     try:

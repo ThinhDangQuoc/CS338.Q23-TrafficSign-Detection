@@ -51,6 +51,7 @@ def detect_image(
     image,
     conf_threshold: float = 0.25,
     img_size: int | None = None,
+    track: bool = False,
 ) -> list[dict[str, Any]]:
     """Run YOLO on a BGR/RGB image array and return normalized detections."""
     if model is None or image is None:
@@ -64,7 +65,10 @@ def detect_image(
         predict_kwargs: dict[str, Any] = {"source": frame, "conf": conf_threshold, "verbose": False}
         if img_size:
             predict_kwargs["imgsz"] = int(img_size)
-        results = model.predict(**predict_kwargs)
+        if track:
+            results = model.track(persist=True, **predict_kwargs)
+        else:
+            results = model.predict(**predict_kwargs)
     except Exception as exc:
         raise RuntimeError(f"Lỗi khi chạy YOLO inference: {exc}") from exc
 
@@ -79,12 +83,17 @@ def detect_image(
         class_id = int(box.cls[0])
         xyxy = [int(round(value)) for value in box.xyxy[0].tolist()]
         class_name = class_names[class_id] if 0 <= class_id < len(class_names) else names.get(class_id, f"Class {class_id}")
+        
+        # Get track id if tracking is enabled and it is assigned
+        track_id = int(box.id[0]) if getattr(box, "id", None) is not None else None
+        
         detections.append(
             {
                 "class_id": class_id,
                 "class_name": class_name,
                 "confidence": round(float(box.conf[0]), 4),
                 "box": xyxy,
+                "track_id": track_id,
             }
         )
 

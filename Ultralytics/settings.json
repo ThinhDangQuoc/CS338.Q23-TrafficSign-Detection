@@ -1,0 +1,21 @@
+{
+  "settings_version": "0.0.6",
+  "datasets_dir": "E:\\Nam_3_HK2\\NhanDang\\datasets",
+  "weights_dir": "E:\\Nam_3_HK2\\NhanDang\\CS338.Q23-TrafficSign-Detection\\weights",
+  "runs_dir": "E:\\Nam_3_HK2\\NhanDang\\CS338.Q23-TrafficSign-Detection\\runs",
+  "uuid": "a094f5e2aa649a99aa3812237354433977d32b0e574ff1cddc2b081aee101fd8",
+  "sync": true,
+  "api_key": "",
+  "openai_api_key": "",
+  "clearml": true,
+  "comet": true,
+  "dvc": true,
+  "hub": true,
+  "mlflow": true,
+  "neptune": true,
+  "raytune": true,
+  "tensorboard": false,
+  "wandb": false,
+  "vscode_msg": true,
+  "openvino_msg": true
+}
