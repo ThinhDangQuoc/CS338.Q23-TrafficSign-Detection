@@ -8,6 +8,7 @@ from pathlib import Path
 import streamlit as st
 
 from traffic_sign_app.config import (
+    BASE_DIR,
     CLASSES_PATH,
     DB_PATH,
     MODEL_PATH,
@@ -384,7 +385,12 @@ def _render_header() -> None:
     )
 
 
-def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> tuple[float, int, int, bool, bool, bool, str]:
+def _render_sidebar(
+    classes: list[str],
+    signs_data: dict,
+    model_ready: bool,
+    model_options: list[str],
+) -> tuple[float, int, int, bool, bool, bool, str]:
     with st.sidebar:
         st.markdown(
             f"""
@@ -398,6 +404,21 @@ def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> 
             unsafe_allow_html=True,
         )
         with st.container(border=True):
+            st.markdown("<div class='sidebar-title'>Mô hình AI</div>", unsafe_allow_html=True)
+            
+            # Match current selection index or default to 0
+            curr_val = st.session_state.get("selected_model_path")
+            def_idx = 0
+            if curr_val in model_options:
+                def_idx = model_options.index(curr_val)
+                
+            st.selectbox(
+                "Chọn file model",
+                options=model_options,
+                index=def_idx,
+                key="selected_model_path",
+            )
+            
             st.markdown("<div class='sidebar-title'>Thiết lập nhận diện</div>", unsafe_allow_html=True)
             conf_threshold = st.slider("Ngưỡng tin cậy", 0.05, 0.95, 0.25, 0.05)
             if st.session_state.get("selected_vehicle_type") not in VEHICLE_OPTIONS:
@@ -427,14 +448,21 @@ def _render_sidebar(classes: list[str], signs_data: dict, model_ready: bool) -> 
 
 
 def _load_model_or_show_warning(model_path: str):
-    if not Path(model_path).exists():
-        st.warning("Thiếu model. Hãy đặt file best.pt vào models/best.pt hoặc nhập đúng đường dẫn ở sidebar.")
+    if not model_path:
+        return None
+    path = Path(model_path)
+    if not path.is_absolute():
+        from traffic_sign_app.config import BASE_DIR
+        path = BASE_DIR / path
+
+    if not path.exists():
+        st.warning(f"Thiếu model tại {path.name}. Hãy đặt file model vào thư mục models/.")
         return None
 
     try:
-        return cached_model(model_path)
+        return cached_model(str(path))
     except Exception as exc:
-        st.warning(str(exc))
+        st.warning(f"Lỗi khi load model: {exc}")
         return None
 
 
@@ -454,7 +482,19 @@ def main() -> None:
     signs_data = cached_signs()
     scenarios = cached_scenarios()
 
-    model_path = str(MODEL_PATH)
+    # Find available models in base_dir/models
+    models_dir = BASE_DIR / "models"
+    models_dir.mkdir(exist_ok=True)
+    model_files = sorted(list(models_dir.glob("*.pt")) + list(models_dir.glob("*.onnx")), key=lambda p: p.name)
+    model_options = [str(p.relative_to(BASE_DIR).as_posix()) for p in model_files]
+    if not model_options:
+        model_options = ["models/best.pt"]
+
+    # Set default model path if not initialized
+    if "selected_model_path" not in st.session_state or st.session_state.selected_model_path not in model_options:
+        st.session_state.selected_model_path = model_options[0]
+
+    model_path = st.session_state.selected_model_path
     model = _load_model_or_show_warning(model_path)
     _render_header()
     (
@@ -469,6 +509,7 @@ def main() -> None:
         classes,
         signs_data,
         model is not None,
+        model_options,
     )
 
     # ── Main navigation ─────────────────────────────────────────────────────

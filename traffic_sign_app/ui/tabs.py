@@ -295,10 +295,34 @@ def render_image_tab(
             )
 
         action_col_1, action_col_2, action_col_3, action_col_4 = st.columns(4)
-        action_col_1.button("Xem giải thích", disabled=False)
-        action_col_2.button("Hỏi chatbot", disabled=True, help="Sẽ bổ sung sau")
-        action_col_3.button("Tạo quiz", disabled=True, help="Sẽ bổ sung sau")
-        action_col_4.button("Lưu vào lịch sử", disabled=True, help="Sẽ bổ sung sau")
+        
+        if action_col_1.button("🔈 Đọc biển báo", use_container_width=True, key="img_speak_sign"):
+            speak_sign(selected_sign)
+            
+        if action_col_2.button("🤖 Hỏi chatbot", use_container_width=True, key="img_chat_sign"):
+            st.session_state.main_section = "📖 Học & Luyện tập"
+            st.session_state.learn_tab = "🤖 Hỏi AI"
+            st.session_state.selected_sign_code = str(selected_sign.get("class_id"))
+            st.rerun()
+            
+        if action_col_3.button("🧠 Tạo quiz", use_container_width=True, key="img_quiz_sign"):
+            st.session_state.main_section = "📖 Học & Luyện tập"
+            st.session_state.learn_tab = "🧠 Quiz"
+            st.session_state.practice_source = "static"
+            st.session_state.practice_sign_override = selected_sign
+            st.session_state.practice_question = None
+            st.rerun()
+            
+        if action_col_4.button("💾 Lưu vào lịch sử", use_container_width=True, key="img_save_sign"):
+            save_detection(
+                selected_detection.get("class_id"),
+                selected_sign.get("class_name", selected_detection.get("class_name", "Unknown")),
+                float(selected_detection.get("confidence", 0.0)),
+                selected_sign.get("meaning", ""),
+                "image_manual",
+                DB_PATH,
+            )
+            st.toast("Đã lưu biển báo vào lịch sử thành công!", icon="💾")
 
     except Exception as exc:
         st.session_state.image_last_error = "Không xử lý được ảnh đã tải. Vui lòng thử ảnh khác hoặc kiểm tra định dạng."
@@ -454,18 +478,23 @@ def render_model_evaluation_tab(model, classes: list[str]) -> None:
     st.header("Đánh giá model")
     st.caption("Tổng hợp nhanh trạng thái model và các file đánh giá sinh ra từ YOLO train/val nếu có.")
 
-    model_exists = MODEL_PATH.exists()
+    selected_model_path = st.session_state.get("selected_model_path", "models/best.pt")
+    curr_model_path = BASE_DIR / selected_model_path
+    model_exists = curr_model_path.exists()
+
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Model path", str(MODEL_PATH.relative_to(BASE_DIR)))
+    c1.metric("Model path", str(selected_model_path))
     c2.metric("Số class", len(classes) if classes else 0)
     c3.metric("Framework", "YOLO")
     c4.metric("Trạng thái", "loaded" if model is not None else ("missing" if not model_exists else "error"))
 
     c5, c6 = st.columns(2)
     c5.metric("Dataset", "Vietnamese Traffic Signs")
-    c6.metric("Kích thước file model", _format_file_size(MODEL_PATH))
+    c6.metric("Kích thước file model", _format_file_size(curr_model_path))
     if not model_exists:
-        st.warning("Chưa tìm thấy models/best.pt. Hãy đặt model đúng đường dẫn để chạy nhận diện.")
+        st.warning(f"Chưa tìm thấy model tại {selected_model_path}. Hãy chọn model khác hoặc kiểm tra lại file.")
+
+
 
     artifact_names = [
         "results.png",
@@ -1179,7 +1208,65 @@ def render_quiz_tab(signs_data: dict, scenarios: dict) -> None:
 
         # Load practice question if None
         if st.session_state.practice_question is None:
-            if st.session_state.practice_source == "static":
+            override_sign = st.session_state.get("practice_sign_override")
+            if override_sign:
+                st.session_state.practice_sign_override = None
+                
+                # Check if we should use AI or offline
+                if st.session_state.practice_source == "ai" and has_api:
+                    with st.spinner(f"AI đang tạo câu hỏi cho biển {override_sign.get('short_name')}..."):
+                        ai_q = generate_quiz_with_llm(override_sign, difficulty="medium")
+                        if ai_q:
+                            st.session_state.practice_question = {
+                                "id": f"ai_{override_sign.get('class_id')}",
+                                "question": ai_q["question"],
+                                "options": ai_q["options"],
+                                "answer": ai_q["answer"],
+                                "explanation": ai_q["explanation"],
+                            }
+                            st.session_state.practice_question_id = random.randint(1000, 9999)
+                
+                # Fallback to templates or scenarios if not generated or if using static
+                if st.session_state.practice_question is None:
+                    # Let's search offline scenarios for this class_id.
+                    target_code = override_sign.get("code", "")
+                    matched_sc_id = None
+                    for sc_id, sc in scenarios.items():
+                        if target_code.lower() in sc_id.lower() or sc_id.lower() in target_code.lower():
+                            matched_sc_id = sc_id
+                            break
+                    
+                    if matched_sc_id:
+                        sc = scenarios[matched_sc_id]
+                        st.session_state.practice_question = {
+                            "id": matched_sc_id,
+                            "question": f"**Tình huống:** {sc.get('scenario', '')}\n\n**Câu hỏi:** {sc.get('question', '')}",
+                            "options": list(sc.get("options", [])),
+                            "answer": sc.get("answer"),
+                            "explanation": sc.get("explanation"),
+                        }
+                    else:
+                        sign_name = override_sign.get("short_name") or override_sign.get("class_name", "biển báo")
+                        meaning = override_sign.get("meaning", "Tuân thủ quy định giao thông")
+                        action = override_sign.get("driver_action", "Chú ý quan sát và di chuyển chậm")
+                        
+                        distractors_action = [
+                            "Tăng tốc vượt qua nhanh để tránh cản trở giao thông",
+                            "Dừng xe giữa làn đường và bật đèn cảnh báo",
+                            "Rẽ sang hướng khác bất kỳ để tránh biển báo",
+                        ]
+                        
+                        options = _generate_quiz_options(action, distractors_action)
+                        st.session_state.practice_question = {
+                            "id": f"temp_{override_sign.get('class_id')}",
+                            "question": f"Khi di chuyển trên đường gặp **{sign_name}** ({override_sign.get('code', '')}), người điều khiển phương tiện cần thực hiện hành động nào sau đây?",
+                            "options": options,
+                            "answer": action,
+                            "explanation": f"**Giải thích:** Biển **{sign_name}** có ý nghĩa: *{meaning}*. Do đó, hành động đúng là: *{action}*.",
+                        }
+                    st.session_state.practice_question_id = random.randint(1000, 9999)
+            
+            elif st.session_state.practice_source == "static":
                 sc_id = random.choice(list(scenarios.keys()))
                 sc = scenarios[sc_id]
                 st.session_state.practice_question = {
